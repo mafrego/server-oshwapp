@@ -1,4 +1,4 @@
-const TodosController = require('../controllers/TestController')
+const TestController = require('../controllers/TestController')
 
 module.exports = (app) => {
     

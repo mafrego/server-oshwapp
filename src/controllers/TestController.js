@@ -1,6 +1,6 @@
 module.exports = {
 
-    async getAllTodos(req, res) {
+    async test(req, res) {
         try {
             res.status(200).send({msg: 'test arrived'})
         } catch (err) {
