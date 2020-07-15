@@ -62,7 +62,6 @@ app.listen(PORT, () => {
 });
 //app.listen(process.env.PORT || 8081)
 // console.log('process.env.PORT: '+ process.env.PORT)
-// console.log('process.env.JWT_SECRET: '+ process.env.JWT_SECRET)
 
 //ABYME
 // the function to manage errors go to the end otherwise doesn't work!!!
