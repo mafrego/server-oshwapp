@@ -8,29 +8,29 @@ const app = express()
 app.use(morgan('combined'))
 
 //ATTENTION only a single valid option
-var corsOptions = {
-  // origin: "http://localhost:8080",
-  // origin: "http://192.168.178.27:8080/",
-  // origin: "http://192.168.1.109:8080/",
-  origin: "https://client-oshwapp.herokuapp.com"
-};
+// var corsOptions = {
+//   origin: "http://localhost:8080",
+//   origin: "http://192.168.178.27:8080/",
+//   origin: "http://192.168.1.109:8080/",
+//   origin: 'https://client-oshwapp.herokuapp.com'
+// };
 
 // add URLs according to your needs
-// let whitelist = null
-// if (process.env.NODE_ENV === 'production') {
-//   whitelist = ['https://client-oshwapp.herokuapp.com']
-// } else {
-//   whitelist = ['http://localhost:8080', 'http://192.168.178.27:8080', 'http://192.168.1.109:8080']
-// }
-// var corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.indexOf(origin) !== -1) {
-//         callback(null, true)
-//       } else {
-//         callback(new Error('Not allowed by CORS'))
-//     }
-//   }
-// }
+let whitelist = null
+if (process.env.NODE_ENV === 'production') {
+  whitelist = ['https://client-oshwapp.herokuapp.com', 'https://client-oshwapp.herokuapp.com:80']
+} else {
+  whitelist = ['http://localhost:8080', 'http://192.168.178.27:8080', 'http://192.168.1.109:8080']
+}
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
 
 app.use(cors(corsOptions))
 
