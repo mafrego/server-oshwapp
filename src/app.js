@@ -15,7 +15,12 @@ app.use(morgan('combined'))
 // };
 
 // add URLs according to your needs
-var whitelist = ['http://localhost:8080', 'http://192.168.178.27:8080', 'http://192.168.1.109:8080']
+let whitelist = null
+if (process.env.NODE_ENV === 'production') {
+  whitelist = ['https://client-oshwapp.herokuapp.com']
+} else {
+  whitelist = ['http://localhost:8080', 'http://192.168.178.27:8080', 'http://192.168.1.109:8080']
+}
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
