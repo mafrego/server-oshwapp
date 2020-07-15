@@ -55,6 +55,7 @@ require('./routes/ProjectRoutes')(app);
 require('./routes/UploadRoutes')(app);
 require('./routes/GuineaPigRoutes')(app);
 require('./routes/TodoRoutes')(app);
+require('./routes/TestRoutes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
