@@ -1,0 +1,84 @@
+const express = require('express')
+const cors = require('cors')
+const morgan = require('morgan')
+const bodyParser = require('body-parser')
+
+const app = express()
+
+
+app.use(morgan('combined'))
+
+//ATTENTION only a single valid option
+// var corsOptions = {
+//   origin: "http://localhost:8080",
+//   origin: "http://192.168.178.27:8080/",
+//   origin: "http://192.168.1.109:8080/"
+// };
+
+// add URLs according to your needs
+var whitelist = ['http://localhost:8080', 'http://192.168.178.27:8080', 'http://192.168.1.109:8080']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+app.use(cors(corsOptions))
+
+// parse requests of content-type - application/json
+app.use(bodyParser.json())
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
+//ABYME for images
+app.use(express.static(__dirname + '/public'));
+
+// old routes file
+// require('./routes')(app)
+
+require('./routes/AuthenticationRoutes')(app);
+require('./routes/UserRoutes')(app);
+require('./routes/AtomRoutes')(app);
+//require('./routes/CompoundRoutes')(app);
+require('./routes/AssemblyRoutes')(app);
+require('./routes/ProductRoutes')(app);
+require('./routes/ProjectRoutes')(app);
+require('./routes/UploadRoutes')(app);
+require('./routes/GuineaPigRoutes')(app);
+require('./routes/TodoRoutes')(app);
+
+// simple route for testing
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to nevn0 application." });
+});
+
+// set port, listen for requests
+const PORT = process.env.PORT || 8081;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
+//app.listen(process.env.PORT || 8081)
+// console.log('process.env.PORT: '+ process.env.PORT)
+// console.log('process.env.JWT_SECRET: '+ process.env.JWT_SECRET)
+
+//ABYME
+// the function to manage errors go to the end otherwise doesn't work!!!
+app.use(function(err, req, res, next){
+  if(err.code === "LIMIT_BOM_FILE_TYPE"){
+    res.status(422).json({error: "Only csv files allowed"})
+    return
+  }
+  if(err.code === "LIMIT_IMAGE_FILE_TYPE"){
+    res.status(422).json({error: "Only png images allowed"})
+    return
+  }
+  if(err.code === "LIMIT_FILE_SIZE"){
+    console.log('File size not allowed')
+    res.status(422).json({error: "File size not allowed"})
+    return
+  }
+})

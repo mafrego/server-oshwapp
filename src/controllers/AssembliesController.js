@@ -1,0 +1,124 @@
+const db = require('../db.js');
+
+module.exports = {
+
+    async index(req, res) {
+        try {
+            let assemblies = null
+            const search = req.query.search
+            if (search) {
+                const ret = await db.all('Assembly', {
+                    name: search
+                })
+                assemblies = await ret.toJson()
+            } else {
+                const ret = await db.all('Assembly')
+                assemblies = await ret.toJson() 
+            }
+            res.status(200).send(assemblies)
+        } catch (err) {
+            console.log(err);
+            res.status(500).send({
+                error: 'An error has occured trying to fetch the assemblies'
+            })
+        }
+    },
+
+    async show(req, res) {
+        try {
+            const ret = await db.model('Assembly').find(req.params.id)
+            const json = await ret.toJson();
+            res.status(200).send(json);
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occured trying to fetch the assembly'
+            });
+        }
+    },
+
+    async post(req, res) {
+        try {
+            req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/test/comp100.png"
+            const ret = await db.mergeOn('Assembly',
+                req.body,
+                {
+                    assembled_from: req.body.parts.map((uuid, index) => ({
+                        quantity: req.body.quantities[index],
+                        node: uuid 
+                    }))
+                })
+            const json = await ret.toJson()
+            res.status(201).send(json)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occurred trying to create the assembly'
+            })
+        }
+    },
+
+    // TODO refactor and find a way to display only the remaining parts to be assembled
+    async assemble(req, res) {
+        const projectId = req.params.id
+        // console.log(projectId)
+        try {
+            const assembly = await db.mergeOn('Assembly',
+                req.body,
+                {
+                    assembled_from: req.body.parts.map((uuid, index) => ({
+                        quantity: req.body.quantities[index],
+                        node: uuid  // This can be an ID or an object. Might be something else depending on your mapping, the default is node...  
+                    }))
+                })
+                .then(assembly => { return assembly.toJson() })
+
+            db.mergeOn('Project',
+                { uuid: projectId },
+                { refers_to: [{ 
+                    node: assembly.uuid, 
+                    type: req.body.type, 
+                    version: req.body.version, 
+                    quantity: req.body.quantity 
+                }] }
+            )
+            res.status(201).send(assembly)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occured trying to create the assembly'
+            })
+        }
+    },
+
+    delete(req, res) {
+        var assembly = db.model('Assembly');
+        assembly.find(req.params.id)
+            .then(response => {
+                response.delete();
+                console.log('assembly deleted');
+                res.status(200).send({ msg: `assembly with uuid:${req.params.id} has been deleted` });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).send({
+                    error: 'An error has occured trying to delete the assembly'
+                });
+            });
+    },
+
+    // refactored 
+    // async delete(req, res) {
+    //     try {
+    //         const assembly = await db.model('Assembly').find(req.params.id)
+    //         await assembly.delete()
+    //         res.status(200).send({ msg: `assembly with uuid:${req.params.id} has been deleted` });
+    //     } catch (error) {
+    //         console.log(error);
+    //         res.status(500).send({
+    //             error: 'An error has occured trying to delete the assembly'
+    //         });
+    //     }
+    // }
+
+}
