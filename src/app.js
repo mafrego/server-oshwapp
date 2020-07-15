@@ -58,7 +58,7 @@ require('./routes/TodoRoutes')(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+  console.log(`Server is listening on port ${PORT}.`);
 });
 //app.listen(process.env.PORT || 8081)
 // console.log('process.env.PORT: '+ process.env.PORT)
