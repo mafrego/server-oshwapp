@@ -5,7 +5,6 @@ const bodyParser = require('body-parser')
 
 const app = express()
 
-
 app.use(morgan('combined'))
 
 //ATTENTION only a single valid option
@@ -50,11 +49,6 @@ require('./routes/ProjectRoutes')(app);
 require('./routes/UploadRoutes')(app);
 require('./routes/GuineaPigRoutes')(app);
 require('./routes/TodoRoutes')(app);
-
-// simple route for testing
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to nevn0 application." });
-});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8081;
