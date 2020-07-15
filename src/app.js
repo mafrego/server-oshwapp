@@ -17,7 +17,7 @@ app.use(morgan('combined'))
 // add URLs according to your needs
 let whitelist = null
 if (process.env.NODE_ENV === 'production') {
-  whitelist = ['https://client-oshwapp.herokuapp.com']
+  whitelist = ['https://client-oshwapp.herokuapp.com:80']
 } else {
   whitelist = ['http://localhost:8080', 'http://192.168.178.27:8080', 'http://192.168.1.109:8080']
 }
