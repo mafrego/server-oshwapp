@@ -9,7 +9,9 @@ if (process.env.NODE_ENV === 'production') {
         process.env.GRAPHENEDB_BOLT_USER,
         process.env.GRAPHENEDB_BOLT_PASSWORD,
         false,
-        process.env.GRAPHENEDB_ENCRYPTION);
+        // process.env.GRAPHENEDB_ENCRYPTION
+        'ENCRYPTION_ON'
+        );
     neode.withDirectory(__dirname + '/models');
 } else {
     neode = Neode
