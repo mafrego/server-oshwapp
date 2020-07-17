@@ -89,6 +89,7 @@ module.exports = {
           error: 'user already registered with this email'
         })
       } else {
+        console.log("email address not present yet")
         next()
       }
     } catch (err) {
