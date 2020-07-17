@@ -81,10 +81,11 @@ module.exports = {
   async checkDuplicateEmail(req, res, next) {
     try {
       const mail = req.body.email
-      // console.log('mail: '+mail)
+      console.log('mail: '+mail)
       const response = await db.first('User', 'email', mail)
-      // console.log('response: '+response)
+      console.log('response: '+response)
       if (response) {
+        console.log("user already registered with this email")
         res.status(400).send({
           error: 'user already registered with this email'
         })

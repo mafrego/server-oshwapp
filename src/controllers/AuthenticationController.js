@@ -29,7 +29,7 @@ module.exports = {
                 token: authJWT.jwtSignUser(json),
                 message: `user with mail: ${req.body.email} registered succesfully!`
             });
-            console.log("WLF")
+            console.log("new user registration process completed    ")
         } catch (error) {
             console.log(error);
             res.status(500).send({
