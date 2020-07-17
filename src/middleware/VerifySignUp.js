@@ -54,50 +54,50 @@ module.exports = {
         }
     },
 
-  checkDuplicateEmail(req, res, next) {
-    const mail = req.body.email
-    db.first('User', 'email', mail)
-      .then(user => {
-        console.log('user from mail: ' + user);
-        if (user) {
-          res.status(400).send({
-            error: "Failed! Username is already in use!"
-          });
-          return
-        } else {
-          next()
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        res.status(400).send({
-          error: 'There is something wrong in verifying user email in db'
-        })
-      }
-      )
-  },
+  // checkDuplicateEmail(req, res, next) {
+  //   const mail = req.body.email
+  //   db.first('User', 'email', mail)
+  //     .then(user => {
+  //       console.log('user from mail: ' + user);
+  //       if (user) {
+  //         res.status(400).send({
+  //           error: "Failed! Username is already in use!"
+  //         });
+  //         return
+  //       } else {
+  //         next()
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //       res.status(400).send({
+  //         error: 'There is something wrong in verifying user email in db'
+  //       })
+  //     }
+  //     )
+  // },
 
   // same checkDuplicateEmail but with async/await
-  // async checkDuplicateEmail(req, res, next) {
-  //   try {
-  //     const mail = req.body.email
-  //     // console.log('mail: '+mail)
-  //     const response = await db.first('User', 'email', mail)
-  //     // console.log('response: '+response)
-  //     if (response) {
-  //       res.status(400).send({
-  //         error: 'user already registered with this email'
-  //       })
-  //     } else {
-  //       next()
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //     res.status(500).send({
-  //       error: 'An error has occured trying to access the db'
-  //     })
-  //   }
-  // },
+  async checkDuplicateEmail(req, res, next) {
+    try {
+      const mail = req.body.email
+      // console.log('mail: '+mail)
+      const response = await db.first('User', 'email', mail)
+      // console.log('response: '+response)
+      if (response) {
+        res.status(400).send({
+          error: 'user already registered with this email'
+        })
+      } else {
+        next()
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({
+        error: 'An error has occured trying to access the db'
+      })
+    }
+  },
 
   checkRolesExisted(req, res, next) {
     if (req.body.roles) {
