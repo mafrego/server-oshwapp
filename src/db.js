@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'production') {
         process.env.GRAPHENEDB_BOLT_USER,
         process.env.GRAPHENEDB_BOLT_PASSWORD,
         true,
-        NEO4J_ENCRYPTED=ENCRYPTION_ON);
+        ENCRYPTION_ON);
     neode.withDirectory(__dirname + '/models');
 } else {
     neode = Neode
