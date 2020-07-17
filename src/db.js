@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === 'production') {
         .withDirectory(__dirname + '/models');
 }
 
+console.log(neode.driver.verifyConnectivity())
 console.log('connected to neo4j through neode')
 
 module.exports = neode;
