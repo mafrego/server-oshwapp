@@ -4,14 +4,21 @@ const Neode = require('neode')
 let neode = null
 
 if (process.env.NODE_ENV === 'production') {
+    // neode = new Neode(
+    //     process.env.GRAPHENEDB_BOLT_URL,
+    //     process.env.GRAPHENEDB_BOLT_USER,
+    //     process.env.GRAPHENEDB_BOLT_PASSWORD,
+    //     false,
+    //     'ENCRYPTION_ON'
+    // );
     neode = new Neode(
         process.env.GRAPHENEDB_BOLT_URL,
         process.env.GRAPHENEDB_BOLT_USER,
         process.env.GRAPHENEDB_BOLT_PASSWORD,
         false,
-        // process.env.GRAPHENEDB_ENCRYPTION
-        'ENCRYPTION_ON'
-        );
+        'neo4j',
+        { NEO4J_ENCRYPTION: 'ENCRYPTION_ON' }
+    );
     neode.withDirectory(__dirname + '/models');
 } else {
     neode = Neode
@@ -22,12 +29,12 @@ if (process.env.NODE_ENV === 'production') {
 async function asyncCall(neode) {
     try {
         const result = await neode.driver.verifyConnectivity();
-        if(result){
+        if (result) {
             console.log('result of verify driver connectivity:')
             console.log(result)
         }
     } catch (error) {
-        console.log(error)        
+        console.log(error)
     }
 }
 
