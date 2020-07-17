@@ -4,13 +4,6 @@ const Neode = require('neode')
 let neode = null
 
 if (process.env.NODE_ENV === 'production') {
-    // neode = new Neode(
-    //     process.env.GRAPHENEDB_BOLT_URL,
-    //     process.env.GRAPHENEDB_BOLT_USER,
-    //     process.env.GRAPHENEDB_BOLT_PASSWORD,
-    //     false,
-    //     'ENCRYPTION_ON'
-    // );
     neode = new Neode(
         process.env.GRAPHENEDB_BOLT_URL,
         process.env.GRAPHENEDB_BOLT_USER,
