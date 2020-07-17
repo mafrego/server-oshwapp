@@ -21,15 +21,12 @@ if (process.env.NODE_ENV === 'production') {
 
 async function asyncCall(neode) {
     const result = await neode.driver.verifyConnectivity();
-    if (result) {
-        console.log('connected to neo4j through neode')
-        console.log(result);
-    } else {
-        console.log('no connection to neo4j established')
+    if(result){
+        console.log('result of verify driver connectivity:')
+        console.log(result)
     }
 }
 
 asyncCall(neode);
-console.log('connected to neo4j through neode')
 
 module.exports = neode;
