@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'production') {
         process.env.GRAPHENEDB_BOLT_USER,
         process.env.GRAPHENEDB_BOLT_PASSWORD,
         false,
-        'neo4j',
+        'app177883617',
         { NEO4J_ENCRYPTION: 'ENCRYPTION_ON' }
     );
     neode.withDirectory(__dirname + '/models');
