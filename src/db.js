@@ -20,8 +20,13 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 async function asyncCall(neode) {
-  const result = await neode.driver.verifyConnectivity();
-  console.log(result);
+    const result = await neode.driver.verifyConnectivity();
+    if (result) {
+        console.log('connected to neo4j through neode')
+        console.log(result);
+    } else {
+        console.log('no connection to neo4j established')
+    }
 }
 
 asyncCall(neode);
