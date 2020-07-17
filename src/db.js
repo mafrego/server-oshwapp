@@ -20,10 +20,14 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 async function asyncCall(neode) {
-    const result = await neode.driver.verifyConnectivity();
-    if(result){
-        console.log('result of verify driver connectivity:')
-        console.log(result)
+    try {
+        const result = await neode.driver.verifyConnectivity();
+        if(result){
+            console.log('result of verify driver connectivity:')
+            console.log(result)
+        }
+    } catch (error) {
+        console.log(error)        
     }
 }
 
