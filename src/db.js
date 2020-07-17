@@ -8,8 +8,8 @@ if (process.env.NODE_ENV === 'production') {
         process.env.GRAPHENEDB_BOLT_URL,
         process.env.GRAPHENEDB_BOLT_USER,
         process.env.GRAPHENEDB_BOLT_PASSWORD,
-        true,
-        ENCRYPTION_ON);
+        false,
+        process.env.GRAPHENEDB_ENCRYPTION);
     neode.withDirectory(__dirname + '/models');
 } else {
     neode = Neode
