@@ -14,16 +14,23 @@ if (process.env.NODE_ENV === 'production') {
     );
     neode.withDirectory(__dirname + '/models');
 } else {
-    neode = Neode
-        .fromEnv()
-        .withDirectory(__dirname + '/models');
+    // alternative to get neode
+    // neode = Neode
+    //     .fromEnv()
+    //     .withDirectory(__dirname + '/models');
+    neode = new Neode(
+        process.env.NEO4J_BOLT_URL,
+        process.env.NEO4J_USERNAME,
+        process.env.NEO4J_PASSWORD
+    );
+    neode.withDirectory(__dirname + '/models')
 }
 
 async function asyncCall(neode) {
     try {
         const result = await neode.driver.verifyConnectivity();
         if (result) {
-            console.log('result of verify driver connectivity:')
+            console.log('result of neode.driver.verifyConnectivity():')
             console.log(result)
         }
     } catch (error) {
