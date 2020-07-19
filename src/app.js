@@ -2,6 +2,8 @@ const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+//ABYME necessary to use .env variables
+require('dotenv').config()
 
 const app = express()
 
