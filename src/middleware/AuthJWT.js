@@ -39,7 +39,6 @@ module.exports = {
             .then(response => response.toJson())
             .then(json => {
                 const roles = [];
-                console.log('roles: '+roles);
                 json.has_role.map(curr => roles.push(curr.node.name));
                 if(roles.includes('admin')){
                     next();
@@ -65,7 +64,6 @@ module.exports = {
             .then(response => response.toJson())
             .then(json => {
                 const roles = [];
-                console.log('roles: '+roles);
                 json.has_role.map(curr => roles.push(curr.node.name));
                 if(roles.includes('assembler')){
                     // pass variable id to next function
@@ -92,7 +90,6 @@ module.exports = {
             .then(response => response.toJson())
             .then(json => {
                 const roles = [];
-                console.log('roles: '+roles);
                 json.has_role.map(curr => roles.push(curr.node.name));
                 if(roles.includes('assembler') || roles.includes('admin')){
                     next();
