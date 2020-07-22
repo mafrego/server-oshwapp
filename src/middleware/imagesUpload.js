@@ -7,21 +7,20 @@ const BUCKET_NAME = process.env.BUCKET_NAME
 const AWSAccessKeyId = process.env.AWSAccessKeyId
 const AWSSecretKey = process.env.AWSSecretKey
 
-// aws.config.update({
-//   AWSAccessKeyId: AWSAccessKeyId,
-//   AWSSecretKey: AWSSecretKey,
-//   region: 'eu-central-1'
-// })
+//  aws.config = new aws.Config();
+//  aws.config.accessKeyId = "AKIAIHLUOEU7QMXSVGDQ";
+//  aws.config.secretAccessKey = "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";
 
-// aws.config.update({
-//   AWSAccessKeyId: 'AKIAIHLUOEU7QMXSVGDQ',
-//   AWSSecretKey: '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',
-//   // region: 'eu-central-1'
-// })
-
- aws.config = new aws.Config();
- aws.config.accessKeyId = "AKIAIHLUOEU7QMXSVGDQ";
- aws.config.secretAccessKey = "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";
+if (process.env.NODE_ENV === 'production') {
+  aws.config = new aws.Config();
+  aws.config.accessKeyId = process.env.AWSAccessKeyId
+  aws.config.secretAccessKey = process.env.AWSSecretKey
+} else {
+  aws.config.update({
+    AWSAccessKeyId: AWSAccessKeyId,
+    AWSSecretKey: AWSSecretKey,
+  })
+}
 
 const syncImagesAtoms = async (req, res, next) => {
 
