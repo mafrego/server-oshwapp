@@ -65,6 +65,11 @@ const uploadImages = imagesUpload.array("files", 1000);
 
 const resizeAndUploadToS3Images = async (req, res, next) => {
 
+
+  console.log(AWSAccessKeyId)
+  console.log(AWSSecretKey)
+  console.log(BUCKET_NAME)
+
   if (!req.files) return next();
 
   try {
