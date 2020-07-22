@@ -1,6 +1,8 @@
 const authJwt  = require("../middleware/AuthJWT");
 const FilesController = require('../controllers/FilesController')
-const filesUpload  = require("../middleware/FilesUpload");
+// const filesUpload  = require("../middleware/FilesUpload");
+const bomUpload  = require("../middleware/bomUpload");
+const imagesUpload  = require("../middleware/imagesUpload");
 
 module.exports = function(app) {
 
@@ -15,28 +17,28 @@ module.exports = function(app) {
     app.post('/bomupload/:projectId',   
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
-    filesUpload.bomUpload,
+    bomUpload.bomUpload,
     FilesController.manageFile)
 
     app.post('/imagesupload/:projectId',   
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
-    filesUpload.multerFilter,
-    // filesUpload.resizeImages,
-    filesUpload.resizeAndUploadToS3Images,
+    imagesUpload.multerFilter,
+    imagesUpload.syncImagesAtoms,
+    imagesUpload.resizeAndUploadToS3Images,
     FilesController.uploadImages)
 
     // testing
     app.post('/single/',
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
-    filesUpload.bomUpload,
+    bomUpload.bomUpload,
     FilesController.testSingleFile)
     // testing
     app.post('/multiple/',
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
-    filesUpload.multerFilter,
+    imagesUpload.multerFilter,
     FilesController.testMultipleFiles)
 
 }
