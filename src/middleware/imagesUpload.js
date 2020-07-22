@@ -7,11 +7,11 @@ const BUCKET_NAME = process.env.BUCKET_NAME
 const AWSAccessKeyId = process.env.AWSAccessKeyId
 const AWSSecretKey = process.env.AWSSecretKey
 
-aws.config.update({
-  AWSAccessKeyId: AWSAccessKeyId,
-  AWSSecretKey: AWSSecretKey,
-  region: 'eu-central-1'
-})
+// aws.config.update({
+//   AWSAccessKeyId: AWSAccessKeyId,
+//   AWSSecretKey: AWSSecretKey,
+//   region: 'eu-central-1'
+// })
 
 const syncImagesAtoms = async (req, res, next) => {
 
@@ -66,6 +66,11 @@ const uploadImages = imagesUpload.array("files", 1000);
 
 const resizeAndUploadToS3Images = async (req, res, next) => {
 
+  aws.config.update({
+    AWSAccessKeyId: AWSAccessKeyId,
+    AWSSecretKey: AWSSecretKey,
+    region: 'eu-central-1'
+  })
 
   console.log(AWSAccessKeyId)
   console.log(AWSSecretKey)
