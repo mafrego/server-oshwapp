@@ -9,7 +9,8 @@ const AWSSecretKey = process.env.AWSSecretKey
 
 aws.config.update({
   AWSAccessKeyId: AWSAccessKeyId,
-  AWSSecretKey: AWSSecretKey
+  AWSSecretKey: AWSSecretKey,
+  region: 'eu-central-1'
 })
 
 const syncImagesAtoms = async (req, res, next) => {
