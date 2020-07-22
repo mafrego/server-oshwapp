@@ -13,6 +13,12 @@ const AWSSecretKey = process.env.AWSSecretKey
 //   region: 'eu-central-1'
 // })
 
+aws.config.update({
+  AWSAccessKeyId: 'AKIAIHLUOEU7QMXSVGDQ',
+  AWSSecretKey: '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',
+  region: 'eu-central-1'
+})
+
 const syncImagesAtoms = async (req, res, next) => {
 
   try {
@@ -65,12 +71,6 @@ const imagesUpload = multer({
 const uploadImages = imagesUpload.array("files", 1000);
 
 const resizeAndUploadToS3Images = async (req, res, next) => {
-
-  aws.config.update({
-    AWSAccessKeyId: AWSAccessKeyId,
-    AWSSecretKey: AWSSecretKey,
-    region: 'eu-central-1'
-  })
 
   console.log(AWSAccessKeyId)
   console.log(AWSSecretKey)
