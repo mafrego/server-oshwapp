@@ -89,7 +89,7 @@ module.exports = {
     async uploadImages(req, res) {
         try {
             if (req.body.images.length <= 0) {
-                return res.send(`You must select at least 1 image.`);
+                return res.send({message: 'You must select at least 1 image!'});
             }
             const images = req.body.images
                 .map(image => "" + image + "")
