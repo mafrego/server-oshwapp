@@ -13,11 +13,15 @@ const AWSSecretKey = process.env.AWSSecretKey
 //   region: 'eu-central-1'
 // })
 
-aws.config.update({
-  AWSAccessKeyId: 'AKIAIHLUOEU7QMXSVGDQ',
-  AWSSecretKey: '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',
-  region: 'eu-central-1'
-})
+// aws.config.update({
+//   AWSAccessKeyId: 'AKIAIHLUOEU7QMXSVGDQ',
+//   AWSSecretKey: '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',
+//   // region: 'eu-central-1'
+// })
+
+ aws.config = new aws.Config();
+ aws.config.accessKeyId = "AKIAIHLUOEU7QMXSVGDQ";
+ aws.config.secretAccessKey = "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";
 
 const syncImagesAtoms = async (req, res, next) => {
 
