@@ -69,7 +69,7 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
   if (!req.files) return next();
 
   try {
-    // const folderName = req.params.projectId
+    const folderName = req.params.projectId
     req.body.images = [];
     req.body.s3responses = []
     const s3 = new aws.S3()
@@ -79,8 +79,8 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
 
         const filename = file.originalname.replace(/\..+$/, "");
         // to add folder in aws s3 bucket just add folderName/anotherFolderName/imgName.png
-        // const newFilename = `${folderName}/${filename}.png`;
-        const newFilename = `test/${filename}.png`;
+        const pathName = `${folderName}/${filename}.png`;
+        // const pathName = `test/${filename}.png`;
 
         const buffer = await sharp(file.buffer)
           .resize(256, 256)
@@ -91,13 +91,13 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
         // remember to add ContentType: .... otherwise aws-s3 doesn't display picture but ask to dowload
         const s3res = await s3.upload({
           Bucket: BUCKET_NAME,
-          Key: newFilename,
+          Key: pathName,
           Body: buffer,
           ContentType: 'image/png',
           ACL: 'public-read'
         }).promise()
 
-        req.body.images.push(newFilename);
+        req.body.images.push(pathName);
         req.body.s3responses.push(s3res)
       })
     );
@@ -118,15 +118,15 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
 //   await Promise.all(
 //     req.files.map(async file => {
 //       // const filename = file.originalname.replace(/\..+$/, "");
-//       const newFilename = `${file.originalname}.png`;
+//       const pathName = `${file.originalname}.png`;
 
 //       await sharp(file.buffer)
 //         .resize(256, 256)
 //         .toFormat("png")
 //         .png({ quality: 90 })
-//         .toFile(`./uploads/${newFilename}`);
+//         .toFile(`./uploads/${pathName}`);
 
-//       req.body.images.push(newFilename);
+//       req.body.images.push(pathName);
 //     })
 //   );
 
