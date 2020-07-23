@@ -15,9 +15,9 @@ const BUCKET_NAME = process.env.BUCKET_NAME
 
 // if (process.env.NODE_ENV === 'production') {
 
-//   console.log(process.env.AWSAccessKeyId)
-//   console.log(process.env.AWSSecretKey)
-//   console.log(process.env.BUCKET_NAME)
+  console.log(process.env.AWSAccessKeyId)
+  console.log(process.env.AWSSecretKey)
+  console.log(process.env.BUCKET_NAME)
 
   aws.config = new aws.Config();
   aws.config.accessKeyId = process.env.AWSAccessKeyId
