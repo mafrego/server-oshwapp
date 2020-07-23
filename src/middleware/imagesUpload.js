@@ -7,41 +7,15 @@ const BUCKET_NAME = process.env.BUCKET_NAME
 const AWSAccessKeyId = process.env.AWSAccessKeyId
 const AWSSecretKey = process.env.AWSSecretKey
 
-//  aws.config = new aws.Config();
-//  aws.config.accessKeyId = "AKIAIHLUOEU7QMXSVGDQ";
-//  aws.config.secretAccessKey = "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";
-
 if (process.env.NODE_ENV === 'production') {
   aws.config = new aws.Config();
-  aws.config.accessKeyId = process.env.AWSAccessKeyId
-  aws.config.secretAccessKey = process.env.AWSSecretKey
+  aws.config.accessKeyId = AWSAccessKeyId
+  aws.config.secretAccessKey = AWSSecretKey
 } else {
   aws.config.update({
     AWSAccessKeyId: AWSAccessKeyId,
     AWSSecretKey: AWSSecretKey,
   })
-}
-
-const syncImagesAtoms = async (req, res, next) => {
-
-  try {
-    const project = await db.model('Project').find(req.params.projectId)
-    const projectJson = await project.toJson()
-    req.atoms = projectJson.consists_of.map(el => el.node)
-    const atomNames = req.atoms.map(el => el.name)
-
-    req.files = req.files.filter(function (file) {
-      if (atomNames.includes(file.originalname.replace(/\..+$/, ""))) {
-        return true
-      } else {
-        return false
-      }
-    })
-    next()
-  } catch (error) {
-    console.log(error)
-  }
-
 }
 
 const multerStorage = multer.memoryStorage();
@@ -72,6 +46,28 @@ const imagesUpload = multer({
 
 // the name 'files' comes from formData.append("files", file); in Vue component + #max uploaded files
 const uploadImages = imagesUpload.array("files", 1000);
+
+const syncImagesAtoms = async (req, res, next) => {
+
+  try {
+    const project = await db.model('Project').find(req.params.projectId)
+    const projectJson = await project.toJson()
+    req.atoms = projectJson.consists_of.map(el => el.node)
+    const atomNames = req.atoms.map(el => el.name)
+
+    req.files = req.files.filter(function (file) {
+      if (atomNames.includes(file.originalname.replace(/\..+$/, ""))) {
+        return true
+      } else {
+        return false
+      }
+    })
+    next()
+  } catch (error) {
+    console.log(error)
+  }
+
+}
 
 const resizeAndUploadToS3Images = async (req, res, next) => {
 
