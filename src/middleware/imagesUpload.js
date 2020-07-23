@@ -3,31 +3,24 @@ const sharp = require("sharp");
 const aws = require("aws-sdk");
 const db = require('../db.js')
 
-// const s3 = new aws.S3({
-//   accessKeyId: process.env.AWSAccessKeyId,
-//   secretAccessKey: process.env.AWSSecretKey
-// });
-
 const BUCKET_NAME = process.env.BUCKET_NAME
-const AWSAccessKeyId = process.env.AWSSecretKey
+const AWSAccessKeyId = process.env.AWSAccessKeyId
 const AWSSecretKey = process.env.AWSSecretKey
 
 
-// if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
 
-  // console.log(process.env.AWSAccessKeyId)
-  // console.log(process.env.AWSSecretKey)
-  // console.log(process.env.BUCKET_NAME)
-
-  // aws.config = new aws.Config();
-  // aws.config.accessKeyId = process.env.AWSAccessKeyId
-  // aws.config.secretAccessKey = process.env.AWSSecretKey
-//   // aws.config.region = 'eu-central-1'
-
+  aws.config = new aws.Config();
+  aws.config.accessKeyId = process.env.AWSAccessKeyId
+  aws.config.secretAccessKey = process.env.AWSSecretKey
+  aws.config.region = 'eu-central-1'
+} else {
   aws.config.update({
-    AWSAccessKeyId: AWSAccessKeyId,
-    AWSSecretKey: AWSSecretKey,
+    accessKeyId: AWSAccessKeyId,
+    secretAccessKey: AWSSecretKey,
+    region: 'eu-central-1'
   })
+}
 
 const multerStorage = multer.memoryStorage();
 
