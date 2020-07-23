@@ -9,7 +9,6 @@ const AWSSecretKey = process.env.AWSSecretKey
 
 
 if (process.env.NODE_ENV === 'production') {
-
   aws.config = new aws.Config();
   aws.config.accessKeyId = process.env.AWSAccessKeyId
   aws.config.secretAccessKey = process.env.AWSSecretKey
