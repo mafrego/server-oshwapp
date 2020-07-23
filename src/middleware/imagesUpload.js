@@ -9,26 +9,25 @@ const db = require('../db.js')
 // });
 
 const BUCKET_NAME = process.env.BUCKET_NAME
-// const AWSAccessKeyId = process.env.AWSSecretKey
-// const AWSSecretKey = process.env.AWSSecretKey
+const AWSAccessKeyId = process.env.AWSSecretKey
+const AWSSecretKey = process.env.AWSSecretKey
 
 
 // if (process.env.NODE_ENV === 'production') {
 
-  console.log(process.env.AWSAccessKeyId)
-  console.log(process.env.AWSSecretKey)
-  console.log(process.env.BUCKET_NAME)
+  // console.log(process.env.AWSAccessKeyId)
+  // console.log(process.env.AWSSecretKey)
+  // console.log(process.env.BUCKET_NAME)
 
-  aws.config = new aws.Config();
-  aws.config.accessKeyId = process.env.AWSAccessKeyId
-  aws.config.secretAccessKey = process.env.AWSSecretKey
+  // aws.config = new aws.Config();
+  // aws.config.accessKeyId = process.env.AWSAccessKeyId
+  // aws.config.secretAccessKey = process.env.AWSSecretKey
 //   // aws.config.region = 'eu-central-1'
-// } else {
-//   aws.config.update({
-//     AWSAccessKeyId: AWSAccessKeyId,
-//     AWSSecretKey: AWSSecretKey,
-//   })
-// }
+
+  aws.config.update({
+    AWSAccessKeyId: AWSAccessKeyId,
+    AWSSecretKey: AWSSecretKey,
+  })
 
 const multerStorage = multer.memoryStorage();
 
