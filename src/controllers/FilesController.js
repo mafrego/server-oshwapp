@@ -88,16 +88,10 @@ module.exports = {
 
     async uploadImages(req, res) {
         try {
-            if (req.body.images.length <= 0) {
+            if (req.body.s3responses.length <= 0) {
                 return res.send({message: 'no images were uploaded'});
             }
-            const images = req.body.images
-                .map(image => "" + image + "")
-                .join(" ");
-
-            console.log(images)
             res.status(201).send({
-                files: images,
                 message: 'Images uploaded!',
                 s3responses: req.body.s3responses
             })

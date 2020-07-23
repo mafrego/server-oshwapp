@@ -78,7 +78,6 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
 
   try {
     const folderName = req.params.projectId
-    req.body.images = [];
     req.body.s3responses = []
     const s3 = new aws.S3()
 
@@ -104,7 +103,10 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
           ACL: 'public-read'
         }).promise()
 
-        req.body.images.push(pathName);
+        // add image url to relative neo4j node
+        const imgURL = s3res.Location
+        await db.mergeOn('Product', {name: filename}, {imageUrl: imgURL})
+
         req.body.s3responses.push(s3res)
       })
     );
