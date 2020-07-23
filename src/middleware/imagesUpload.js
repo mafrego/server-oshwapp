@@ -1,6 +1,6 @@
 const multer = require('multer');
 const sharp = require("sharp");
-let aws = require("aws-sdk");
+const aws = require("aws-sdk");
 const db = require('../db.js')
 
 const s3 = new aws.S3({
@@ -9,8 +9,8 @@ const s3 = new aws.S3({
 });
 
 const BUCKET_NAME = process.env.BUCKET_NAME
-// const AWSAccessKeyId = process.env.AWSAccessKeyId
-// const AWSSecretKey = process.env.AWSSecretKey
+const AWSAccessKeyId = process.env.AWSSecretKey
+const AWSSecretKey = process.env.AWSSecretKey
 
 
 // if (process.env.NODE_ENV === 'production') {
