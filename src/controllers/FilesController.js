@@ -88,12 +88,12 @@ module.exports = {
 
     async uploadImages(req, res) {
         try {
-            if (req.body.s3responses.length <= 0) {
+            if (req.results.length <= 0) {
                 return res.send({message: 'no images were uploaded'});
             }
             res.status(201).send({
                 message: 'Images uploaded!',
-                s3responses: req.body.s3responses
+                s3responses: req.results
             })
         } catch (error) {
             console.log(error)
