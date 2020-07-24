@@ -39,7 +39,8 @@ module.exports = {
 
     async post(req, res) {
         try {
-            req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/test/comp100.png"
+            // TODO set imageUrl properly
+            req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/service/assembly.png"
             const ret = await db.mergeOn('Assembly',
                 req.body,
                 {
