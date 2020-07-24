@@ -7,7 +7,6 @@ const BUCKET_NAME = process.env.BUCKET_NAME
 const AWSAccessKeyId = process.env.AWSAccessKeyId
 const AWSSecretKey = process.env.AWSSecretKey
 
-
 if (process.env.NODE_ENV === 'production') {
   aws.config = new aws.Config();
   aws.config.accessKeyId = AWSAccessKeyId
@@ -78,10 +77,9 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
 
   try {
     const folderName = req.params.projectId
-    req.body.s3responses = []
     const s3 = new aws.S3()
 
-    await Promise.all(
+    req.results = await Promise.all(
       req.files.map(async file => {
 
         const filename = file.originalname.replace(/\..+$/, "");
@@ -104,13 +102,11 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
         }).promise()
 
         // add image url to relative neo4j node
-        const imgURL = s3res.Location
-        await db.mergeOn('Product', {name: filename}, {imageUrl: imgURL})
+        await db.mergeOn('Product', {name: filename}, {imageUrl: s3res.Location})
 
-        req.body.s3responses.push(s3res)
+        return s3res
       })
     );
-
     next();
   } catch (error) {
     console.log(error)
