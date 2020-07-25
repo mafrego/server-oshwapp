@@ -42,7 +42,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             res.status(500).send({
-                error: 'An error has occured trying to fetch the atom'
+                error: 'An error has occured trying to fetch the project'
             });
         }
     },
@@ -146,7 +146,7 @@ module.exports = {
             if (atoms.length > 0) {         // Objects must not be empty otherwise s3 error
                 const imageNames = projectJson.consists_of.map(el => el.node.name)
                 const Objects = imageNames.map(name => ({ Key: req.params.id + "/" + name + ".png" }))
-                console.log(Objects)
+                // console.log(Objects)
                 const toDelete = {
                     Bucket: BUCKET_NAME,
                     Delete: {
