@@ -143,22 +143,24 @@ module.exports = {
             // TODO replicate code above for assemblies
 
             // array of objects(imagename.png) to delete on s3
-            const imageNames = projectJson.consists_of.map(el => el.node.name)
-            const Objects = imageNames.map(name => ({ Key: req.params.id + "/" + name + ".png" }))
-            console.log(Objects)
-            const toDelete = {
-                Bucket: BUCKET_NAME,
-                Delete: {
-                    Objects: Objects,
-                    Quiet: false
+            if (atoms.length > 0) {         // Objects must not be empty otherwise s3 error
+                const imageNames = projectJson.consists_of.map(el => el.node.name)
+                const Objects = imageNames.map(name => ({ Key: req.params.id + "/" + name + ".png" }))
+                console.log(Objects)
+                const toDelete = {
+                    Bucket: BUCKET_NAME,
+                    Delete: {
+                        Objects: Objects,
+                        Quiet: false
+                    }
                 }
-            }
 
-            const s3 = new aws.S3()
-            s3.deleteObjects(toDelete, function (err, data) {
-                if (err) console.log(err, err.stack)
-                else console.log(data)
-            })
+                const s3 = new aws.S3()
+                s3.deleteObjects(toDelete, function (err, data) {
+                    if (err) console.log(err, err.stack)
+                    else console.log(data)
+                })
+            }
             // finally delete project node itself
             await project.delete()
             // console.log(`deleted project with uuid:${req.params.id}`);
