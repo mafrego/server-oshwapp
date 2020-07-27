@@ -101,7 +101,8 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
           ACL: 'public-read'
         }).promise()
 
-        // add image url to relative neo4j node
+        // TODO: get all nodes from CONSISTS_OF of project with that name and
+        // add image url
         await db.mergeOn('Product', {name: filename}, {imageUrl: s3res.Location})
 
         return s3res
