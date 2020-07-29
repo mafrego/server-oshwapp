@@ -26,7 +26,7 @@ module.exports = {
             // possible types child, root
             type: 'string',
             version: 'string',
-            quantity: 'int'
+            quantity_to_assemble: 'int'
         },
         eager: true // <-- eager load this relationship
     },
@@ -36,7 +36,7 @@ module.exports = {
         relationship: "CONSISTS_OF",
         direction: "out",
         properties: {
-            quantity: 'int'
+            quantity_to_assemble: 'int'
         },
         eager: true // <-- eager load this relationship
     },

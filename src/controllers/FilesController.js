@@ -70,7 +70,7 @@ module.exports = {
                     db.mergeOn('Project',
                         { uuid: projectId },
                         {
-                            consists_of: [{ quantity: element.quantity, node: element }]
+                            consists_of: [{ quantity_to_assemble: element.quantity, node: element }]
                         }
                     )
                 });
