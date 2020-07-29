@@ -48,7 +48,7 @@ module.exports = {
     },
 
     //it works
-    async showBom(req, res) {
+    async getBom(req, res) {
         const project = db.model('Project')
         try {
             const bom = await project.find(req.query.projectID)
