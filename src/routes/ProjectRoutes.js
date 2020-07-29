@@ -20,6 +20,9 @@ module.exports = function(app) {
     app.get('/projects/:id', 
     ProjectsController.show)
 
+    app.get('/getassemblables/:id', 
+    ProjectsController.getAssemblables)
+
     app.post('/projects',   
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,

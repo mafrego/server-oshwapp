@@ -47,28 +47,47 @@ module.exports = {
         }
     },
 
-    //it works
+    async getAssemblables(req, res) {
+        try {
+            const project = await db.model('Project').find(req.params.id)
+            const json = await project.toJson()
+            const atoms = json.consists_of.filter(el => {return el.quantity_to_assemble > 0})
+                .map(rel => rel.node)
+            const assemblies = json.refers_to.filter(el => {return el.quantity_to_assemble > 0})
+                .map(rel => rel.node)
+            const assemblables = atoms.concat(assemblies)
+            // console.log(assemblables)
+            res.status(200).send(assemblables)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occured trying to fetch the assemblable products'
+            });
+        }
+    },
+
+    //TODO refactor
     async getBom(req, res) {
         const project = db.model('Project')
         try {
             const bom = await project.find(req.query.projectID)
                 .then(ret => {
-                    console.log('ret: ' + ret)
+                    // console.log('ret: ' + ret)
                     return ret.toJson()
                 })
                 .then(pro => {
-                    console.log(pro)
+                    // console.log(pro)
                     // get all user projects and assign them to array pros
                     const arr = pro.consists_of.map(rel => rel.node);
-                    console.log('arr: ' + arr)
+                    // console.log('arr: ' + arr)
                     return arr
                 })
-            console.log('bom: ' + bom)
-            res.send(bom)
+            // console.log('bom: ' + bom)
+            res.status(200).send(bom)
         } catch (error) {
             console.log(error);
             res.status(500).send({
-                error: 'An error has occured trying to fetch the projectBOM'
+                error: 'An error has occured trying to fetch the project BOM'
             })
         }
     },
@@ -94,9 +113,11 @@ module.exports = {
             const state = req.body.state
             const projectId = req.params.id
             const ret = await db.model('Project').find(projectId)
-            const updatedRet = await ret.update({ state: state })
-            const project = await updatedRet.toJson()
-            res.status(200).send(project)
+            await ret.update({ state: state })
+            res.status(200).send({
+                state: state,
+                message: `project: ${projectId} updated to state: ${state}`
+            })
         } catch (error) {
             console.log(error);
             res.status(500).send({
