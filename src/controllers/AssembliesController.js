@@ -62,7 +62,6 @@ module.exports = {
     // TODO refactor and find a way to display only the remaining parts to be assembled
     async assemble(req, res) {
         const projectId = req.params.id
-        // console.log(projectId)
         try {
             const assembly = await db.mergeOn('Assembly',
                 req.body,
@@ -74,16 +73,18 @@ module.exports = {
                 })
                 .then(assembly => { return assembly.toJson() })
 
+                // link project to new assembly
             db.mergeOn('Project',
                 { uuid: projectId },
                 { refers_to: [{ 
                     node: assembly.uuid, 
                     type: req.body.type, 
                     version: req.body.version, 
-                    quantity: req.body.quantity 
+                    quantity_to_assemble: req.body.quantity_to_assemble
                 }] }
             )
             res.status(201).send(assembly)
+            // console.log(assembly)
         } catch (error) {
             console.log(error);
             res.status(500).send({
@@ -97,7 +98,7 @@ module.exports = {
         assembly.find(req.params.id)
             .then(response => {
                 response.delete();
-                console.log('assembly deleted');
+                // console.log('assembly deleted');
                 res.status(200).send({ msg: `assembly with uuid:${req.params.id} has been deleted` });
             })
             .catch(err => {
