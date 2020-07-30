@@ -7,6 +7,7 @@ module.exports = {
     },
     name: 'string',
     description: 'string',
+    quantity: 'int',
     atom: 'int',
     compound: 'int',
     license: 'string',
