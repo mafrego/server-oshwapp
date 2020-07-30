@@ -7,7 +7,7 @@ module.exports = {
     },
     name: 'string',
     description: 'string',
-    //quantity: 'int',
+    quantity: 'int',
     material: 'string',
     weight: 'float',
     weightUnit: 'string',
@@ -16,6 +16,12 @@ module.exports = {
         type: "string",
         uri: {
             scheme: ['http', 'https', 'file']
+        }
+    },
+    vendorUrl: {
+        type: "string",
+        uri: {
+            scheme: ['http', 'https']
         }
     },
     built_with: {

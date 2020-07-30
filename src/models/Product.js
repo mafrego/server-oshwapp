@@ -7,6 +7,7 @@ module.exports = {
     },
     name: 'string',
     description: 'string',
+    quantity: 'int',
     material: 'string',
     weight: 'float',
     weightUnit: 'string',
