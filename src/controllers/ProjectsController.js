@@ -51,11 +51,14 @@ module.exports = {
         try {
             const project = await db.model('Project').find(req.params.id)
             const json = await project.toJson()
-            const atoms = json.consists_of.filter(el => {return el.quantity_to_assemble > 0})
+            const atoms = json.consists_of.filter(el => { return el.quantity_to_assemble > 0 })
                 .map(rel => rel.node)
-            const assemblies = json.refers_to.filter(el => {return el.quantity_to_assemble > 0})
+            const assemblies = json.refers_to.filter(el => { return el.quantity_to_assemble > 0 })
                 .map(rel => rel.node)
+            // console.log(json)
+            // console.log(assemblies)
             const assemblables = atoms.concat(assemblies)
+            // console.log("assemblables:")
             // console.log(assemblables)
             res.status(200).send(assemblables)
         } catch (error) {
@@ -161,7 +164,22 @@ module.exports = {
                     }
                 })
             )
-            // TODO replicate code above for assemblies
+            // eplicate code above for assemblies
+            const assemblies = projectJson.refers_to.map(el => el.node)
+            await Promise.all(
+                assemblies.map(async assembly => {
+                    try {
+                        const assemblyToDelete = await db.model('Assembly').find(assembly.uuid)
+                        await assemblyToDelete.delete()
+                        console.log(`deleted assembly with uuid:${assembly.uuid}`)
+                    } catch (error) {
+                        console.log(error)
+                        res.status(500).send({
+                            error: `An error has occured trying to delete the assembly with uuid:${assembly.uuid}`
+                        });
+                    }
+                })
+            )
 
             // array of objects(imagename.png) to delete on s3
             if (atoms.length > 0) {         // Objects must not be empty otherwise s3 error
@@ -185,7 +203,9 @@ module.exports = {
             // finally delete project node itself
             await project.delete()
             // console.log(`deleted project with uuid:${req.params.id}`);
-            res.status(200).send({ msg: `project with uuid:${req.params.id} has been deleted` });
+            res.status(200).send({ misg: `project with uuid:${req.params.id} has been deleted` });
+            // console.log(response)
+            // res.status(200).send(response);
         } catch (error) {
             console.log(error);
             res.status(500).send({
