@@ -8,6 +8,7 @@ module.exports = {
     name: 'string',
     description: 'string',
     quantity: 'int',
+    quantity_to_assemble: 'int',
     material: 'string',
     weight: 'float',
     weightUnit: 'string',
@@ -15,7 +16,7 @@ module.exports = {
     imageUrl: {
         type: "string",
         uri: {
-            scheme: ['http', 'https', 'file']
+            scheme: ['http', 'https']
         }
     },
     built_with: {

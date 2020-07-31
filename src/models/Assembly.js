@@ -8,6 +8,7 @@ module.exports = {
     name: 'string',
     description: 'string',
     quantity: 'int',
+    quantity_to_assemble: 'int',
     atom: 'int',
     compound: 'int',
     license: 'string',

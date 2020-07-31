@@ -8,6 +8,7 @@ module.exports = {
     name: 'string',
     description: 'string',
     quantity: 'int',
+    quantity_to_assemble: 'int',
     material: 'string',
     weight: 'float',
     weightUnit: 'string',
