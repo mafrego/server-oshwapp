@@ -66,11 +66,16 @@ module.exports = {
                 const atoms = result.data
                 const projectId = req.params.projectId
                 atoms.forEach(element => {
+                    // add quantity_to_assemble
+                    element.quantity_to_assemble = element.quantity
                     // it works: given Project create relationship to and node Atom
                     db.mergeOn('Project',
                         { uuid: projectId },
                         {
-                            consists_of: [{ quantity_to_assemble: element.quantity, node: element }]
+                            consists_of: [{ 
+                                // quantity_to_assemble: element.quantity, 
+                                node: element 
+                            }]
                         }
                     )
                 });
@@ -89,7 +94,7 @@ module.exports = {
     async uploadImages(req, res) {
         try {
             if (req.results.length <= 0) {
-                return res.send({message: 'no images were uploaded'});
+                return res.status(200).send({message: 'no images uploaded'});
             }
             res.status(201).send({
                 message: 'Images uploaded!',
