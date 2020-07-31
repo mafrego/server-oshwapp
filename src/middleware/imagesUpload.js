@@ -54,16 +54,29 @@ const syncImagesAtoms = async (req, res, next) => {
   try {
     const project = await db.model('Project').find(req.params.projectId)
     const projectJson = await project.toJson()
-    req.atoms = projectJson.consists_of.map(el => el.node)
-    const atomNames = req.atoms.map(el => el.name)
 
-    req.files = req.files.filter(function (file) {
+    const atoms = projectJson.consists_of.map(el => el.node)
+    const atomNames = atoms.map(el => el.name)
+    const filteredAtomImgNames = req.files.filter(function (file) {
       if (atomNames.includes(file.originalname.replace(/\..+$/, ""))) {
         return true
       } else {
         return false
       }
     })
+
+    const assemblies = projectJson.refers_to.map(el => el.node)
+    const assemblyNames = assemblies.map(el => el.name)
+    const filteredAssemblyImgNames = req.files.filter(function (file) {
+      if (assemblyNames.includes(file.originalname.replace(/\..+$/, ""))) {
+        return true
+      } else {
+        return false
+      }
+    })
+
+    req.files = filteredAtomImgNames.concat(filteredAssemblyImgNames)
+
     next()
   } catch (error) {
     console.log(error)
