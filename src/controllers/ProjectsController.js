@@ -47,18 +47,42 @@ module.exports = {
         }
     },
 
+    // async getAssemblables(req, res) {
+    //     try {
+    //         const project = await db.model('Project').find(req.params.id)
+    //         const json = await project.toJson()
+    //         const atoms = json.consists_of.filter(el => { return el.quantity_to_assemble > 0 })
+    //             .map(rel => rel.node)
+    //         const assemblies = json.refers_to.filter(el => { return el.quantity_to_assemble > 0 })
+    //             .map(rel => rel.node)
+    //         // console.log(json)
+    //         // console.log(assemblies)
+    //         const assemblables = atoms.concat(assemblies)
+    //         // console.log("assemblables:")
+    //         // console.log(assemblables)
+    //         res.status(200).send(assemblables)
+    //     } catch (error) {
+    //         console.log(error);
+    //         res.status(500).send({
+    //             error: 'An error has occured trying to fetch the assemblable products'
+    //         });
+    //     }
+    // },
+
     async getAssemblables(req, res) {
         try {
             const project = await db.model('Project').find(req.params.id)
             const json = await project.toJson()
-            const atoms = json.consists_of.filter(el => { return el.quantity_to_assemble > 0 })
+            const atoms = json.consists_of
                 .map(rel => rel.node)
-            const assemblies = json.refers_to.filter(el => { return el.quantity_to_assemble > 0 })
+                .filter(el => { return el.quantity_to_assemble > 0 })
+            // console.log(atoms)
+            const assemblies = json.refers_to
                 .map(rel => rel.node)
+                .filter(el => { return el.quantity_to_assemble > 0 })
             // console.log(json)
             // console.log(assemblies)
             const assemblables = atoms.concat(assemblies)
-            // console.log("assemblables:")
             // console.log(assemblables)
             res.status(200).send(assemblables)
         } catch (error) {
@@ -146,7 +170,7 @@ module.exports = {
     // delete all relative products and images in s3
     async delete(req, res) {
         try {
-            // nodes with relationships consist_of and refers_to to delete 
+            //delete all nodes with relationship consist_of(atoms)
             const project = await db.model('Project').find(req.params.id)
             const projectJson = await project.toJson()
             const atoms = projectJson.consists_of.map(el => el.node)
@@ -164,14 +188,14 @@ module.exports = {
                     }
                 })
             )
-            // eplicate code above for assemblies
+            //delete all nodes with relationship refers_to(assemblies)
             const assemblies = projectJson.refers_to.map(el => el.node)
             await Promise.all(
                 assemblies.map(async assembly => {
                     try {
                         const assemblyToDelete = await db.model('Assembly').find(assembly.uuid)
                         await assemblyToDelete.delete()
-                        console.log(`deleted assembly with uuid:${assembly.uuid}`)
+                        // console.log(`deleted assembly with uuid:${assembly.uuid}`)
                     } catch (error) {
                         console.log(error)
                         res.status(500).send({
@@ -181,6 +205,7 @@ module.exports = {
                 })
             )
 
+            // TODO add logic for assembly images
             // array of objects(imagename.png) to delete on s3
             if (atoms.length > 0) {         // Objects must not be empty otherwise s3 error
                 const imageNames = projectJson.consists_of.map(el => el.node.name)
@@ -200,6 +225,27 @@ module.exports = {
                     else console.log(data)
                 })
             }
+
+            if (assemblies.length > 0) {         // Objects must not be empty otherwise s3 error
+                const imageNames = projectJson.refers_to.map(el => el.node.name)
+                const Objects = imageNames.map(name => ({ Key: req.params.id + "/" + name + ".png" }))
+                // console.log(Objects)
+                const toDelete = {
+                    Bucket: BUCKET_NAME,
+                    Delete: {
+                        Objects: Objects,
+                        Quiet: false
+                    }
+                }
+
+                const s3 = new aws.S3()
+                s3.deleteObjects(toDelete, function (err, data) {
+                    if (err) console.log(err, err.stack)
+                    else console.log(data)
+                })
+            }
+
+
             // finally delete project node itself
             await project.delete()
             // console.log(`deleted project with uuid:${req.params.id}`);
