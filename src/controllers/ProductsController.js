@@ -93,7 +93,7 @@ module.exports = {
             tree = await db.cypher('MATCH p=(n:Assembly {uuid: $uuid})-[:ASSEMBLED_FROM*]->(m)  WITH COLLECT(p) AS ps CALL apoc.convert.toTree(ps) yield value RETURN value;',
                 { uuid: req.params.id })
                 .then(ret => {
-                    console.log(ret)
+                    // console.log(ret)
                     return ret.records[0]._fields[0]
                 })
             res.status(200).send(tree)
