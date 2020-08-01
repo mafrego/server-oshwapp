@@ -59,11 +59,12 @@ module.exports = {
         }
     },
 
-    // TODO refactor and find a way to display only the remaining parts to be assembled
+    // TODO refactor function too long
     async assemble(req, res) {
         const projectId = req.params.id
         // console.log(req.body.quantities)
         try {
+            //1. create assembly
             const assembly = await db.mergeOn('Assembly',
                 req.body,
                 {
@@ -74,7 +75,7 @@ module.exports = {
                 })
                 .then(assembly => { return assembly.toJson() })
 
-            // link project to new assembly
+            //2. link project to newly created assembly
             db.mergeOn('Project',
                 { uuid: projectId },
                 {
@@ -87,10 +88,10 @@ module.exports = {
                 }
             )
 
-            // update quantity_to_assemble for each children of newly created assembly
+            //3. update quantity_to_assemble for each children of newly created assembly
             await Promise.all(req.body.parts.map(async (uuid, index) => {
                 try {
-                    const product = await db.find('Product', uuid )
+                    const product = await db.find('Product', uuid)
                     const json = await product.toJson()
                     const quantity_to_assemble = json.quantity_to_assemble
                     const updated_quantity = quantity_to_assemble - req.body.quantities[index]
@@ -104,8 +105,22 @@ module.exports = {
             })
             )
 
-            res.status(201).send(assembly)
-            // console.log(assembly)
+            // 4. get assemblables
+            const project = await db.model('Project').find(projectId)
+            const json = await project.toJson()
+            const atoms = json.consists_of
+                .map(rel => rel.node)
+                .filter(el => { return el.quantity_to_assemble > 0 })
+            // console.log(atoms)
+            const assemblies = json.refers_to
+                .map(rel => rel.node)
+                .filter(el => { return el.quantity_to_assemble > 0 })
+            // console.log(json)
+            // console.log(assemblies)      
+            const assemblables = atoms.concat(assemblies)
+
+            res.status(201).send(assemblables)
+            // console.log(assemblables)
         } catch (error) {
             console.log(error);
             res.status(500).send({
