@@ -89,12 +89,14 @@ module.exports = {
             )
 
             //3. update quantity_to_assemble for each children of newly created assembly
+            const assemblyQuantity = req.body.quantity
+            console.log(assemblyQuantity)
             await Promise.all(req.body.parts.map(async (uuid, index) => {
                 try {
                     const product = await db.find('Product', uuid)
                     const json = await product.toJson()
                     const quantity_to_assemble = json.quantity_to_assemble
-                    const updated_quantity = quantity_to_assemble - req.body.quantities[index]
+                    const updated_quantity = quantity_to_assemble - (req.body.quantities[index]*assemblyQuantity)
                     await db.mergeOn('Product', { uuid: uuid }, { quantity_to_assemble: updated_quantity })
                 } catch (error) {
                     console.log(error)
