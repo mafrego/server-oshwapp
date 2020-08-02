@@ -47,28 +47,6 @@ module.exports = {
         }
     },
 
-    // async getAssemblables(req, res) {
-    //     try {
-    //         const project = await db.model('Project').find(req.params.id)
-    //         const json = await project.toJson()
-    //         const atoms = json.consists_of.filter(el => { return el.quantity_to_assemble > 0 })
-    //             .map(rel => rel.node)
-    //         const assemblies = json.refers_to.filter(el => { return el.quantity_to_assemble > 0 })
-    //             .map(rel => rel.node)
-    //         // console.log(json)
-    //         // console.log(assemblies)
-    //         const assemblables = atoms.concat(assemblies)
-    //         // console.log("assemblables:")
-    //         // console.log(assemblables)
-    //         res.status(200).send(assemblables)
-    //     } catch (error) {
-    //         console.log(error);
-    //         res.status(500).send({
-    //             error: 'An error has occured trying to fetch the assemblable products'
-    //         });
-    //     }
-    // },
-
     async getAssemblables(req, res) {
         try {
             const project = await db.model('Project').find(req.params.id)
@@ -93,23 +71,11 @@ module.exports = {
         }
     },
 
-    //TODO refactor
     async getBom(req, res) {
-        const project = db.model('Project')
         try {
-            const bom = await project.find(req.query.projectID)
-                .then(ret => {
-                    // console.log('ret: ' + ret)
-                    return ret.toJson()
-                })
-                .then(pro => {
-                    // console.log(pro)
-                    // get all user projects and assign them to array pros
-                    const arr = pro.consists_of.map(rel => rel.node);
-                    // console.log('arr: ' + arr)
-                    return arr
-                })
-            // console.log('bom: ' + bom)
+            const project = await db.find('Project', req.params.id)
+            const json = await project.toJson()
+            const bom = await json.consists_of.map(el => el.node)
             res.status(200).send(bom)
         } catch (error) {
             console.log(error);
