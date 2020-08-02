@@ -14,7 +14,7 @@ module.exports = function(app) {
     app.get('/projects',
     ProjectsController.index)
 
-    app.get('/projectBOM',
+    app.get('/projectBOM/:id',
     ProjectsController.getBom)
 
     app.get('/projects/:id', 
