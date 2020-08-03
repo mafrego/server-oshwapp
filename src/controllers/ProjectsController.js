@@ -85,6 +85,22 @@ module.exports = {
         }
     },
 
+    async getAllProducts(req, res) {
+        try {
+            const project = await db.find('Project', req.params.id)
+            const json = await project.toJson()
+            const atoms = await json.consists_of.map(el => el.node)
+            const assemblies = await json.refers_to.map(el => el.node)
+            const products = atoms.concat(assemblies)
+            res.status(200).send(products)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occured trying to fetch all products'
+            })
+        }
+    },
+
     async createProject(req, res) {
         try {
             // TODO compose imageUrl from env. variable and user image or other

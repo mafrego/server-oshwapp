@@ -17,6 +17,9 @@ module.exports = function(app) {
     app.get('/projectBOM/:id',
     ProjectsController.getBom)
 
+    app.get('/productsbyproject/:id',
+    ProjectsController.getAllProducts)
+
     app.get('/projects/:id', 
     ProjectsController.show)
 
