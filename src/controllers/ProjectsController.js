@@ -231,13 +231,41 @@ module.exports = {
             // finally delete project node itself
             await project.delete()
             // console.log(`deleted project with uuid:${req.params.id}`);
-            res.status(200).send({ misg: `project with uuid:${req.params.id} has been deleted` });
+            res.status(200).send({ msg: `project with uuid:${req.params.id} has been deleted` });
             // console.log(response)
             // res.status(200).send(response);
         } catch (error) {
             console.log(error);
             res.status(500).send({
                 error: 'An error has occured trying to delete the project'
+            });
+        }
+    },
+
+    async deleteBom(req, res){
+        try {
+            const project = await db.model('Project').find(req.params.id)
+            const projectJson = await project.toJson()
+            const atoms = projectJson.consists_of.map(el => el.node)
+            await Promise.all(
+                atoms.map(async atom => {
+                    try {
+                        const atomToDelete = await db.model('Atom').find(atom.uuid)
+                        await atomToDelete.delete()
+                        // console.log(`deleted atom with uuid:${atom.uuid}`)
+                    } catch (error) {
+                        console.log(error)
+                        res.status(500).send({
+                            error: `An error has occured trying to delete the atom with uuid:${atom.uuid}`
+                        });
+                    }
+                })
+            )
+            res.status(200).send({ msg: `bom of project:${req.params.id} has been deleted` });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: `An error has occured trying to delete bom of project:${req.params.id}`
             });
         }
     }

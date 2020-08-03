@@ -40,4 +40,9 @@ module.exports = function(app) {
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     ProjectsController.delete)
+
+    app.delete('/projectbom/:id', 
+    authJwt.verifyToken,
+    authJwt.isAssemblerOrAdmin,
+    ProjectsController.deleteBom)
 }
