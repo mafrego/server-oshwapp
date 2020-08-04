@@ -23,8 +23,8 @@ module.exports = function(app) {
     AssembliesController.post)
 
     app.post('/assembly/:id', 
-    // authJwt.verifyToken,
-    // authJwt.isAssemblerOrAdmin,
+    authJwt.verifyToken,
+    authJwt.isAssemblerOrAdmin,
     AssembliesController.assemble)
 
     app.delete('/assemblies/:id', 
