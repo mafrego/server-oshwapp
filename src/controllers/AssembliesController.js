@@ -140,9 +140,9 @@ module.exports = {
             const assembly = await db.mergeOn('Assembly',
                 req.body,
                 {
-                    assembled_from: req.body.parts.map((uuid, index) => ({
-                        quantity: req.body.quantities[index],
-                        node: uuid  // This can be an ID or an object. Might be something else depending on your mapping, the default is node...  
+                    assembled_from: req.body.parts.map( item => ({
+                        quantity: item.quantity_single,
+                        node: item.uuid  // This can be an ID or an object. Might be something else depending on your mapping, the default is node...  
                     }))
                 })
                 .then(assembly => { return assembly.toJson() })
@@ -154,26 +154,20 @@ module.exports = {
                     refers_to: [{
                         node: assembly.uuid,
                         type: req.body.type,
-                        version: req.body.version,
-                        // quantity_to_assemble: req.body.quantity_to_assemble
+                        version: req.body.version
                     }]
                 }
             )
 
             //3. update quantity_to_assemble for each children of newly created assembly
-            const assemblyQuantity = req.body.quantity
-            console.log(assemblyQuantity)
-            await Promise.all(req.body.parts.map(async (uuid, index) => {
+            await Promise.all(req.body.parts.map(async item => {
                 try {
-                    const product = await db.find('Product', uuid)
-                    const json = await product.toJson()
-                    const quantity_to_assemble = json.quantity_to_assemble
-                    const updated_quantity = quantity_to_assemble - (req.body.quantities[index]*assemblyQuantity)
-                    await db.mergeOn('Product', { uuid: uuid }, { quantity_to_assemble: updated_quantity })
+                    const updated_quantity = item.quantity_to_assemble - item.quantity_total
+                    await db.mergeOn('Product', { uuid: item.uuid }, { quantity_to_assemble: updated_quantity })
                 } catch (error) {
                     console.log(error)
                     res.status(500).send({
-                        error: `An error has occured trying to update quantity_to assemble of Product with uuid:${uuid}`
+                        error: `An error has occured trying to update quantity_to assemble of Product with uuid:${item.uuid}`
                     });
                 }
             })
