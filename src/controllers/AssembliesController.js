@@ -67,7 +67,7 @@ module.exports = {
             const assembly = await db.mergeOn('Assembly',
                 req.body,
                 {
-                    assembled_from: req.body.parts.map( item => ({
+                    assembled_from: req.body.parts.map(item => ({
                         quantity: item.quantity_single,
                         node: item.uuid  // This can be an ID or an object. Might be something else depending on your mapping, the default is node...  
                     }))
@@ -126,15 +126,46 @@ module.exports = {
 
     async disassemble(req, res) {
         try {
-            
-            // const assembly = await db.model('Assembly').find(req.params.id)
-            // await assembly.delete()
-            console.log('disassemble called')
+            // find assembly and get its quantity
+            const assembly = await db.model('Assembly').find(req.params.id)
+            const assemblyJson = await assembly.toJson()
+            // console.log('assemblyJson:', assemblyJson)
+            const assemblyQuantity = assemblyJson.quantity
+
+            // find assembly's parts, get their quantities from the relationship "assembled_from"
+            const parts = assemblyJson.assembled_from.map(item => {
+                return {
+                    node: item.node,
+                    quantity: item.quantity
+                }
+            })
+            console.log('parts:', parts)
+
+            // for each part add to quantity_to_assemble the product of assembly's quantity 
+            // and single part qty in relationship "assembled_from" 
+            await Promise.all(parts.map(async item => {
+                try {
+                    const updated_quantity = item.node.quantity_to_assemble + assemblyQuantity * item.quantity
+                    const ret = await db.mergeOn('Product', { uuid: item.node.uuid }, { quantity_to_assemble: updated_quantity })
+                    const retjson = await ret.toJson() 
+                    console.log(retjson)
+                } catch (error) {
+                    console.log(error)
+                    res.status(500).send({
+                        error: `An error has occured trying to update quantity_to assemble of Product with uuid:${item.node.uuid}`
+                    });
+                }
+            }
+            ))
+
+            // delete assembly
+            await assembly.delete()
+
             res.status(200).send({ msg: `assembly with uuid:${req.params.id} has been disassembled` });
         } catch (error) {
             console.log(error);
             res.status(500).send({
-                error: 'An error has occured trying to delete the assembly'
+                error: 'An error has occured trying to disassemble'
             });
         }
     },
