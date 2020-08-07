@@ -59,6 +59,7 @@ module.exports = {
         }
     },
 
+    // return assemblables
     async assembleCopy(req, res) {
         const projectId = req.params.id
         // console.log(req.body.quantities)
@@ -115,7 +116,6 @@ module.exports = {
             const assemblables = atoms.concat(assemblies)
 
             res.status(201).send(assemblables)
-            // console.log(assemblables)
         } catch (error) {
             console.log(error);
             res.status(500).send({
