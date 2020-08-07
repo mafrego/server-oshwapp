@@ -75,7 +75,7 @@ module.exports = {
                 .then(assembly => { return assembly.toJson() })
 
             //2. link project to newly created assembly
-            db.mergeOn('Project',
+            await db.mergeOn('Project',
                 { uuid: projectId },
                 {
                     refers_to: [{
@@ -139,16 +139,16 @@ module.exports = {
                     quantity: item.quantity
                 }
             })
-            console.log('parts:', parts)
+            // console.log('parts:', parts)
 
             // for each part add to quantity_to_assemble the product of assembly's quantity 
             // and single part qty in relationship "assembled_from" 
             await Promise.all(parts.map(async item => {
                 try {
                     const updated_quantity = item.node.quantity_to_assemble + assemblyQuantity * item.quantity
-                    const ret = await db.mergeOn('Product', { uuid: item.node.uuid }, { quantity_to_assemble: updated_quantity })
-                    const retjson = await ret.toJson() 
-                    console.log(retjson)
+                    await db.mergeOn('Product', { uuid: item.node.uuid }, { quantity_to_assemble: updated_quantity })
+                    // const retjson = await ret.toJson() 
+                    // console.log(retjson)
                 } catch (error) {
                     console.log(error)
                     res.status(500).send({
