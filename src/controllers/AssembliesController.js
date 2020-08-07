@@ -124,6 +124,21 @@ module.exports = {
         }
     },
 
+    async disassemble(req, res) {
+        try {
+            
+            // const assembly = await db.model('Assembly').find(req.params.id)
+            // await assembly.delete()
+            console.log('disassemble called')
+            res.status(200).send({ msg: `assembly with uuid:${req.params.id} has been disassembled` });
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occured trying to delete the assembly'
+            });
+        }
+    },
+
     delete(req, res) {
         var assembly = db.model('Assembly');
         assembly.find(req.params.id)
