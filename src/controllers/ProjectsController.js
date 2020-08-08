@@ -107,7 +107,10 @@ module.exports = {
             req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/service/project.svg"
             const ret = await db.model('Project').create(req.body)
             const project = await ret.toJson()
-            await db.mergeOn('User', { uuid: req.body.userID }, { manages: [{ state: 'created', node: project.uuid }] })
+            await db.mergeOn('User',
+                { uuid: req.body.userID },
+                { manages: [{ state: 'created', node: project.uuid }] }
+            )
             res.status(201).send(project)
         } catch (error) {
             console.log(error);
@@ -119,13 +122,25 @@ module.exports = {
 
     async updateProjectState(req, res) {
         try {
-            const state = req.body.state
+            const newstate = req.body.state
             const projectId = req.params.id
-            const ret = await db.model('Project').find(projectId)
-            await ret.update({ state: state })
+            const project = await db.model('Project').find(projectId)
+            if (newstate === 'released') {
+                const some = await db.mergeOn('Project',
+                    { uuid: projectId },
+                    { state: newstate, refers_to: [{ 
+                        type: req.body.relationType, 
+                        node: req.body.assemblyID 
+                    }] }
+                )
+                const json = await some.toJson()
+                console.log(json)
+            } else {
+                await project.update({ state: newstate })
+            }
             res.status(200).send({
-                state: state,
-                message: `project: ${projectId} updated to state: ${state}`
+                state: newstate,
+                message: `project: ${projectId} updated to state: ${newstate}`
             })
         } catch (error) {
             console.log(error);
@@ -242,7 +257,7 @@ module.exports = {
         }
     },
 
-    async deleteBom(req, res){
+    async deleteBom(req, res) {
         try {
             const project = await db.model('Project').find(req.params.id)
             const projectJson = await project.toJson()
