@@ -2,24 +2,53 @@ const db = require('../db.js');
 
 module.exports = {
 
+    // async index(req, res) {
+    //     try {
+    //         let assemblies = null
+    //         const search = req.query.search
+    //         if (search) {
+    //             const ret = await db.all('Product', {
+    //                 name: search
+    //             })
+    //             assemblies = await ret.toJson()
+    //         } else {
+    //             const ret = await db.all('Product')
+    //             assemblies = await ret.toJson()
+    //         }
+    //         res.status(200).send(assemblies)
+    //     } catch (err) {
+    //         console.log(err);
+    //         res.status(500).send({
+    //             error: 'An error has occured trying to fetch the assemblies'
+    //         })
+    //     }
+    // },
+
+    // adapt for browsing only roots of rooted projects
     async index(req, res) {
         try {
-            let assemblies = null
+            let result = []
             const search = req.query.search
+            // console.log(search)
+            const projects = await db.all('Project', { state: 'released' })
+            const json = await projects.toJson()
+
             if (search) {
-                const ret = await db.all('Product', {
-                    name: search
-                })
-                assemblies = await ret.toJson()
+                console.log(search)
+                const products = await json.map(project => project.has_root[0].node)
+                result = await products.filter(item => item.name === search)
+                // console.log(result)
             } else {
-                const ret = await db.all('Product')
-                assemblies = await ret.toJson()
+                result = json.map(project => project.has_root[0].node)
+                // console.log(result)
             }
-            res.status(200).send(assemblies)
+            // console.log(result)
+            res.status(200).send(result)
+
         } catch (err) {
             console.log(err);
             res.status(500).send({
-                error: 'An error has occured trying to fetch the assemblies'
+                error: 'An error has occured trying to fetch the roots'
             })
         }
     },
