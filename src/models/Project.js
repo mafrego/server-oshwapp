@@ -9,7 +9,7 @@ module.exports = {
     description: 'string',
     license: 'string',
     dateTime: 'datetime',
-    //possible states: create, assembling, rooted, released, forked, versioned
+    // states: create, assembling, rooted, released, forked, versioned
     state: 'string',
     imageUrl: {
         type: "string",
@@ -17,15 +17,22 @@ module.exports = {
             scheme: ['http', 'https', 'file']
         }
     },
+    has_root: {
+        type: "relationships",
+        target: "Assembly",
+        relationship: "HAS_ROOT",
+        direction: "out",
+        properties: {
+            version: 'string'
+        },
+        eager: true // <-- eager load this relationship
+    },
     refers_to: {
         type: "relationships",
         target: "Assembly",
         relationship: "REFERS_TO",
         direction: "out",
         properties: {
-            // possible types child, root
-            type: 'string',
-            version: 'string',
             quantity_to_assemble: 'int'
         },
         eager: true // <-- eager load this relationship
@@ -40,15 +47,4 @@ module.exports = {
         },
         eager: true // <-- eager load this relationship
     },
-    // for the moment this relationship doesn't make any sense
-    // includes: {
-    //     type: "relationships",
-    //     target: "Project",
-    //     relationship: "INCLUDES",
-    //     direction: "out",
-    //     properties: {
-    //         someprop: 'string'
-    //     },
-    //     eager: true // <-- eager load this relationship
-    // }
 }
