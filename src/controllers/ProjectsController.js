@@ -126,15 +126,13 @@ module.exports = {
             const projectId = req.params.id
             const project = await db.model('Project').find(projectId)
             if (newstate === 'released') {
-                const some = await db.mergeOn('Project',
+                await db.mergeOn('Project',
                     { uuid: projectId },
-                    { state: newstate, refers_to: [{ 
-                        type: req.body.relationType, 
+                    { state: newstate, has_root: [{ 
+                        version: req.body.version, 
                         node: req.body.assemblyID 
                     }] }
                 )
-                const json = await some.toJson()
-                console.log(json)
             } else {
                 await project.update({ state: newstate })
             }
