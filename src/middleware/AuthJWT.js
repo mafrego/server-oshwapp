@@ -32,17 +32,17 @@ module.exports = {
         });
     },
 
-    isAdmin(req, res, next){
+    isAdmin(req, res, next) {
 
-        console.log('req.userID: '+req.userId);
+        console.log('req.userID: ' + req.userId);
         db.first('User', 'uuid', req.userId)
             .then(response => response.toJson())
             .then(json => {
                 const roles = [];
                 json.has_role.map(curr => roles.push(curr.node.name));
-                if(roles.includes('admin')){
+                if (roles.includes('admin')) {
                     next();
-                    return;    
+                    return;
                 }
                 res.status(403).send({
                     error: "Require admin role!"
@@ -53,23 +53,23 @@ module.exports = {
                 console.log(err);
                 res.status(400).send({
                     error: 'There is something wrong with db'
-                    })
-                }
+                })
+            }
             )
     },
 
-    isAssembler(req, res, next){
+    isAssembler(req, res, next) {
         let id = req.userId
         db.first('User', 'uuid', req.userId)
             .then(response => response.toJson())
             .then(json => {
                 const roles = [];
                 json.has_role.map(curr => roles.push(curr.node.name));
-                if(roles.includes('assembler')){
+                if (roles.includes('assembler')) {
                     // pass variable id to next function
                     req.userid = id;
                     next();
-                    return;    
+                    return;
                 }
                 res.status(403).send({
                     error: "Require assembler role!"
@@ -80,20 +80,20 @@ module.exports = {
                 console.log(err);
                 res.status(400).send({
                     error: 'There is something wrong with db'
-                    })
-                }
+                })
+            }
             )
     },
 
-    isAssemblerOrAdmin(req, res, next){
+    isAssemblerOrAdmin(req, res, next) {
         db.first('User', 'uuid', req.userId)
             .then(response => response.toJson())
             .then(json => {
                 const roles = [];
                 json.has_role.map(curr => roles.push(curr.node.name));
-                if(roles.includes('assembler') || roles.includes('admin')){
+                if (roles.includes('assembler') || roles.includes('admin')) {
                     next();
-                    return;    
+                    return;
                 }
                 res.status(403).send({
                     error: "Require assembler or admin role!"
@@ -104,8 +104,8 @@ module.exports = {
                 console.log(err);
                 res.status(400).send({
                     error: 'There is something wrong with db'
-                    })
-                }
+                })
+            }
             )
     }
 }
