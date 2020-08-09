@@ -52,6 +52,7 @@ app.use(express.static(__dirname + '/public'));
 // require('./routes')(app)
 
 require('./routes/AuthenticationRoutes')(app);
+require('./routes/AdminRoutes')(app);
 require('./routes/UserRoutes')(app);
 require('./routes/AtomRoutes')(app);
 //require('./routes/CompoundRoutes')(app);
