@@ -24,9 +24,13 @@ module.exports = {
                     }
                 )
             const json = await user.toJson()
+            // json includes user and all its relationships and relationships of their nodes because of
+            // eager: true
+            // jsonwebtoken.sign() needs json as first argument
+            const uuid = {uuid : json.uuid}
             res.status(201).send({
                 user: json,
-                token: authJWT.jwtSignUser(json),
+                token: authJWT.jwtSignUser(uuid),
                 message: `user with mail: ${req.body.email} registered succesfully!`
             });
             console.log("new user registration process completed    ")
@@ -50,15 +54,19 @@ module.exports = {
                 return null
             }
             const json = await ret.toJson()
+            // json includes user and all its relationships and relationships of their nodes because of
+            // eager: true
+            // jsonwebtoken.sign() needs json as first argument
+            const uuid = { uuid: json.uuid}
             const authorities = [];
             const roles = json.has_role;
             // console.log(roles[0].node.name);
             roles.map(curr => authorities.push("ROLE_" + curr.node.name.toUpperCase()));
-            // console.log(authorities);
+            // console.log(authJWT.jwtSignUser(uuid))
             if (bcrypt.compareSync(password, json.password)) {
                 res.status(200).send({
                     user: json,
-                    token: authJWT.jwtSignUser(json),
+                    token: authJWT.jwtSignUser(uuid),
                     roles: authorities,
                     message: `user with email: ${email} logged in successfully!`
                 })

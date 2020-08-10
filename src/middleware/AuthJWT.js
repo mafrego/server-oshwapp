@@ -5,9 +5,9 @@ const db = require('../db')
 module.exports = {
 
     jwtSignUser(user) {
-        const ONE_WEEK = 60 * 60 * 24 * 7
+        const TIME_TO_EXPIRE = 60 * 60 * 12
         return jwt.sign(user, process.env.JWT_SECRET, {
-            expiresIn: ONE_WEEK
+            expiresIn: TIME_TO_EXPIRE
         })
     },
 
@@ -28,13 +28,14 @@ module.exports = {
             }
             // console.log('decoded.uuid: '+decoded.uuid);
             req.userId = decoded.uuid;
+            // console.log("decoded.uuid: ",decoded.uuid)
             next();
         });
     },
 
     isAdmin(req, res, next) {
 
-        console.log('req.userID: ' + req.userId);
+        // console.log('req.userID: ' + req.userId);
         db.first('User', 'uuid', req.userId)
             .then(response => response.toJson())
             .then(json => {
