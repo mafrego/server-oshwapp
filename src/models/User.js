@@ -25,6 +25,7 @@ module.exports = {
             state: 'string'
         },
         eager: true // <-- eager load this relationship
+        // eager: false // <-- no eager load this relationship
     },
     evaluates: {
         type: "relationships",

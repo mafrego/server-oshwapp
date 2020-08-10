@@ -12,7 +12,7 @@ module.exports = {
                 // manages: user.manages
             }})
             res.status(200).send(result)
-            // console.log(result)
+            // console.log(json)
         } catch (error) {
             console.log(error);
             res.status(500).send({
@@ -25,13 +25,13 @@ module.exports = {
         try {
             const projects = await db.all('Project')
             const json = await projects.toJson()
-            const result = json.map( project => { return { 
+            const results = json.map( project => { return { 
                 name: project.name,
                 uuid: project.uuid,
                 // manages: user.manages
             }})
-            res.status(200).send(result)
-            // console.log(result)
+            res.status(200).send(results)
+            // console.log(json)
         } catch (error) {
             console.log(error);
             res.status(500).send({
