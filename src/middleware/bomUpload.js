@@ -27,6 +27,10 @@ const bomUpload = multer({
 // the name 'file' comes from formData.append("file", this.file); in Vue component
 const uploadBOM = bomUpload.single('file')
 
+function isValidString(str){
+  const patter = /^[0-9a-zA-Z_]+$/;
+  return patter.test(str)
+}
 
 const config = {
   headers: [
@@ -40,6 +44,9 @@ const config = {
       unique: true,
       uniqueError: function (headerName) {
         return `${headerName} is not unique`
+      },
+      validate: function(str){
+        return isValidString(str)
       }
     },
     {
@@ -111,7 +118,7 @@ const config = {
 }
 
 const csvValidate = async (req, res, next) => {
-  console.log("csvValidate function called")
+  // console.log("csvValidate function called")
   try {
     let stream = fs.createReadStream(req.file.path);
     const result = await CSVFileValidator(stream, config)
@@ -119,6 +126,7 @@ const csvValidate = async (req, res, next) => {
         fs.unlinkSync(req.file.path);       //remove file
         return ret;
       })
+      // console.log(result)
     if (result.inValidMessages.length) {
       throw result.inValidMessages
     } else {
@@ -131,7 +139,20 @@ const csvValidate = async (req, res, next) => {
   }
 }
 
+// for each object in req.result remove all properties with empty string
+// otherwise neode gives empty string error while creating new node 
+const removeEmptyProperties = (req, res, next) => {
+  const cleaned = req.result.data.map( obj =>  { 
+    Object.keys(obj).forEach( k => { if(obj[k] === '') delete obj[k]})
+    return obj
+   })
+   console.log(cleaned)
+   req.result.data = cleaned
+   next()
+}
+
 module.exports = {
   bomFileFilter: uploadBOM,
-  csvFileValidate: csvValidate
+  csvFileValidate: csvValidate,
+  removeEmptyProperties : removeEmptyProperties
 };

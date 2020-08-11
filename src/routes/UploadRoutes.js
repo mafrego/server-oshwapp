@@ -18,6 +18,7 @@ module.exports = function(app) {
     authJwt.isAssemblerOrAdmin,
     bomUpload.bomFileFilter,
     bomUpload.csvFileValidate,
+    bomUpload.removeEmptyProperties,
     FilesController.storeBom)
 
     app.post('/imagesupload/:projectId',   
