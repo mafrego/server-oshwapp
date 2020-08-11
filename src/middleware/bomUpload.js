@@ -45,12 +45,47 @@ const config = {
     {
       name: 'atom description',
       inputName: 'description',
-      required: false
+      required: true
     },
     {
       name: 'quantity',
       inputName: 'quantity',
-      required: false,
+      required: true
+    },
+    {
+      name: 'cost unit',
+      inputName: 'costUnit',
+      required: true
+    },
+    {
+      name: 'currency',
+      inputName: 'currency',
+      required: true
+    },
+    {
+      name: 'code',
+      inputName: 'code',
+      required: false
+    },
+    {
+      name: 'link',
+      inputName: 'link',
+      required: false
+    },
+    {
+      name: 'vendor URL',
+      inputName: 'vendorUrl',
+      required: false
+    },
+    {
+      name: 'minimum order quantity',
+      inputName: 'moq',
+      required: false
+    },
+    {
+      name: 'lead time',
+      inputName: 'leadTime',
+      required: true
     },
     {
       name: 'material',
@@ -66,7 +101,12 @@ const config = {
       name: 'weight unit',
       inputName: 'weightUnit',
       required: false
-    }
+    },
+    {
+      name: 'notes',
+      inputName: 'notes',
+      required: false
+    },
   ]
 }
 

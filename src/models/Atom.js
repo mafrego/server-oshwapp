@@ -6,23 +6,35 @@ module.exports = {
         required: true, 
     },
     name: 'string',
+    code: 'string',
     description: 'string',
-    quantity: 'int',
-    quantity_to_assemble: 'int',
-    material: 'string',
-    weight: 'float',
-    weightUnit: 'string',
-    license: 'string',
-    imageUrl: {
+    link: {
         type: "string",
         uri: {
-            scheme: ['http', 'https', 'file']
+            scheme: ['http', 'https']
         }
     },
     vendorUrl: {
         type: "string",
         uri: {
             scheme: ['http', 'https']
+        }
+    },
+    moq: 'int',
+    leadTime: 'duration',
+    notes: 'string',
+    quantity: 'int',
+    quantity_to_assemble: 'int',
+    material: 'string',
+    weight: 'float',
+    weightUnit: 'string',
+    costUnit: 'float',
+    currency: 'string',
+    license: 'string',
+    imageUrl: {
+        type: "string",
+        uri: {
+            scheme: ['http', 'https', 'file']
         }
     },
     built_with: {
