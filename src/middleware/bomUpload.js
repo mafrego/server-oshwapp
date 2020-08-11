@@ -47,7 +47,7 @@ const config = {
       inputName: 'description',
       required: true
     },
-    {
+    { 
       name: 'quantity',
       inputName: 'quantity',
       required: true
@@ -85,7 +85,7 @@ const config = {
     {
       name: 'lead time',
       inputName: 'leadTime',
-      required: true
+      required: false
     },
     {
       name: 'material',
