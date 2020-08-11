@@ -10,18 +10,26 @@ module.exports = {
             req.result.data.shift()
             // array of atom objects from middleware
             const atoms = req.result.data
+            // console.log(atoms)
             const projectId = req.params.projectId
             atoms.forEach(async element => {
-                element.quantity_to_assemble = element.quantity
-                // it works: given Project create relationship to and node Atom
-                await db.mergeOn('Project',
-                    { uuid: projectId },
-                    {
-                        consists_of: [{
-                            node: element
-                        }]
-                    }
-                )
+                try {
+                    element.quantity_to_assemble = element.quantity
+                    // it works: given Project create relationship to and node Atom
+                    await db.mergeOn('Project',
+                        { uuid: projectId },
+                        {
+                            consists_of: [{
+                                node: element
+                            }]
+                        }
+                    )
+                } catch(error) {
+                    console.log(error)
+                    res.status(500).send({
+                        error: 'An error has occurred trying to link atom to project'
+                    })
+                }
             });
             res.status(201).send({ msg: 'bom uploaded!' })
         } catch (error) {
