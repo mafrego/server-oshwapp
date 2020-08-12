@@ -2,7 +2,6 @@ const db = require('../db.js');
 
 module.exports = {
 
-    // used as middleware function for storing atoms before calling getBom() in ProjectController
     // TODO refactor: use map and ret something to pass to send or use Promise all
     async storeBom(req, res) {
         try {

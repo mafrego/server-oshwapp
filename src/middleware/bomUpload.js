@@ -28,10 +28,11 @@ const bomUpload = multer({
 const uploadBOM = bomUpload.single('file')
 
 function isValidString(str){
-  const patter = /^[0-9a-zA-Z_]+$/;
+  const patter = /^[0-9a-zA-Z_]+$/;    // only alphanumericals and underscores
   return patter.test(str)
 }
 
+// TODO add validation functions for single inputs
 const config = {
   headers: [
     {
@@ -49,6 +50,7 @@ const config = {
         return isValidString(str)
       }
     },
+    // TODO add validate function for alphanumericals, underscores, hyphens, dots and blank spaces
     {
       name: 'atom description',
       inputName: 'description',
@@ -74,16 +76,19 @@ const config = {
       inputName: 'code',
       required: false
     },
+    // TODO add validation function for urls
     {
       name: 'link',
       inputName: 'link',
       required: false
     },
+    // TODO add validation function for urls
     {
       name: 'vendor URL',
       inputName: 'vendorUrl',
       required: false
     },
+    // TODO add validation function for positive integers
     {
       name: 'minimum order quantity',
       inputName: 'moq',
