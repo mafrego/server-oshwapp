@@ -9,9 +9,9 @@ module.exports = {
     description: 'string',
     quantity: 'int',
     quantity_to_assemble: 'int',
-    atom: 'int',
-    compound: 'int',
-    license: 'string',
+    atom: 'int',        //is that necessary?
+    compound: 'int',    //is that necessary?
+    license: 'string',  //is taht necessary?
     imageUrl: {
         type: "string",
         uri: {
