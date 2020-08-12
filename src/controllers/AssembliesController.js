@@ -170,6 +170,7 @@ module.exports = {
         }
     },
 
+    // check if this function is ever used
     delete(req, res) {
         var assembly = db.model('Assembly');
         assembly.find(req.params.id)

@@ -33,6 +33,7 @@ module.exports = {
         });
     },
 
+    // TODO refactor using async/await
     isAdmin(req, res, next) {
 
         // console.log('req.userID: ' + req.userId);
@@ -59,6 +60,7 @@ module.exports = {
             )
     },
 
+    // TODO refactor using async/await
     isAssembler(req, res, next) {
         let id = req.userId
         db.first('User', 'uuid', req.userId)
@@ -86,6 +88,7 @@ module.exports = {
             )
     },
 
+    // TODO refactor using async/await
     isAssemblerOrAdmin(req, res, next) {
         db.first('User', 'uuid', req.userId)
             .then(response => response.toJson())

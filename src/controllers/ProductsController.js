@@ -90,7 +90,8 @@ module.exports = {
     //     }
     // },
 
-    // get all relationships("assembled_from") of Assembly its parts
+    // TODO refactor if eager relationship use method get('relationship_name') to get all nodes
+    // and substitute .then()
     async getchildren(req, res) {
         try {
             // let children = null
