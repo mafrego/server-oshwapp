@@ -151,7 +151,7 @@ const removeEmptyProperties = (req, res, next) => {
     Object.keys(obj).forEach( k => { if(obj[k] === '') delete obj[k]})
     return obj
    })
-   console.log(cleaned)
+  //  console.log(cleaned)
    req.result.data = cleaned
    next()
 }
