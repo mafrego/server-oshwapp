@@ -22,6 +22,11 @@ module.exports = (app) => {
     authJwt.isAssemblerOrAdmin,
     AtomsController.post)
 
+    app.put('/atom', 
+    authJwt.verifyToken,
+    authJwt.isAssemblerOrAdmin,
+    AtomsController.update)
+
     app.delete('/atoms/:id', 
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,

@@ -52,6 +52,23 @@ module.exports = {
         }
     },
 
+    // check if after updating pre-existing relationships are kept
+    async update(req, res) {
+        try {
+            console.log(req.body)
+            const atom = await db.model('Atom').find(req.body.uuid)
+            const atomUpdated = await atom.update(req.body)
+            const json = await atomUpdated.toJson()
+            // 200 for modified existing resource with PUT
+            res.status(200).send(json)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: `An error has occurred trying to update atom with uuid:${req.body.uuid}`
+            })
+        }
+    },
+
     async delete(req, res) {
         try {
             const atom = await db.model('Atom').find(req.params.id)
