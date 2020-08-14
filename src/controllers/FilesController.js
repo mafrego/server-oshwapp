@@ -40,47 +40,74 @@ module.exports = {
     //     }
     // },
 
+    // async storeBom(req, res) {
+    //     // eliminate first element of result.data array because is empty object
+    //     req.result.data.shift()
+    //     // array of atom objects from middleware
+    //     const atoms = req.result.data
+    //     // console.log(atoms)
+    //     const projectId = req.params.projectId
+    //     Promise.all(atoms.map(async element => {
+    //         try {
+    //             element.quantity_to_assemble = element.quantity
+    //             // it works: given Project create relationship to and node Atom
+    //             await db.mergeOn('Project',
+    //                 { uuid: projectId },
+    //                 {
+    //                     consists_of: [{
+    //                         node: element
+    //                     }]
+    //                 }
+    //             )
+    //             // console.log(ret)
+    //         } catch (error) {
+    //             console.log(error)
+    //             res.status(500).send({
+    //                 error: 'An error has occurred trying to link atom to project'
+    //             })
+    //         }
+    //     })
+    //     )
+    //         .then(() => {
+    //             // console.log(ret);
+    //             res.status(201).send({
+    //                 msg: 'bom stored in db'
+    //             })
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //             res.status(400).send({
+    //                 error: 'There is something wrong with db'
+    //             })
+    //         }
+    //         )
+    // },
+
     async storeBom(req, res) {
         // eliminate first element of result.data array because is empty object
         req.result.data.shift()
-        // array of atom objects from middleware
         const atoms = req.result.data
-        // console.log(atoms)
         const projectId = req.params.projectId
-        Promise.all(atoms.map(async element => {
-            try {
-                element.quantity_to_assemble = element.quantity
-                // it works: given Project create relationship to and node Atom
+        try {
+            await Promise.all(atoms.map(async atom => {
+                atom.quantity_to_assemble = atom.quantity
                 await db.mergeOn('Project',
                     { uuid: projectId },
                     {
                         consists_of: [{
-                            node: element
+                            node: atom
                         }]
                     }
                 )
-                // console.log(ret)
-            } catch (error) {
-                console.log(error)
-                res.status(500).send({
-                    error: 'An error has occurred trying to link atom to project'
-                })
             }
-        })
-        )
-            .then(() => {
-                // console.log(ret);
-                res.status(201).send({
-                    msg: 'bom stored in db'
-                })
+            )).then(() => res.status(201).send({ message: 'all atoms linked to project'}))
+        }
+        catch (error) {
+            console.log(error)
+            res.status(500).send({
+                error: 'An error has occurred trying to link atoms to project'
             })
-            .catch(err => {
-                console.log(err);
-                res.status(400).send({
-                    error: 'There is something wrong with db'
-                })
-            }
-            )
+        }
     },
 
     async uploadImages(req, res) {
