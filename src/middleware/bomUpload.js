@@ -15,7 +15,8 @@ const bomFilter = (req, file, cb) => {
   cb(null, true)
 }
 
-const MAX_BOM_SIZE = 20000
+// BOM of 1024 rows is about 160 KB
+const MAX_BOM_SIZE = 200000
 const bomUpload = multer({
   dest: './uploads',
   fileFilter: bomFilter,
@@ -42,6 +43,7 @@ const config = {
       requiredError: function (headerName, rowNumber, columnNumber) {
         return `${headerName} is required in the ${rowNumber} row / ${columnNumber} column`
       },
+      // comment for testing
       unique: true,
       uniqueError: function (headerName) {
         return `${headerName} is not unique`
