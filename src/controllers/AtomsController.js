@@ -52,6 +52,30 @@ module.exports = {
         }
     },
 
+    async addAtomToBom(req, res) {
+        try {
+            // console.log(req.body)
+            let atom = req.body
+            atom.quantity_to_assemble = atom.quantity    
+            // console.log(req.params.projectID)
+            const projectID = req.params.projectID
+            const response = await Promise.all([
+                db.find('Project', projectID),
+                db.create('Atom', atom)
+            ])
+            console.log(response)
+            await response[0].relateTo( response[1], 'consists_of')
+            const json = await response[1].toJson()
+            console.log(json)
+            res.status(201).send(json)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occurred trying to add the atom to the BOM'
+            })
+        }
+    },
+
     // check if after updating pre-existing relationships are kept
     async update(req, res) {
         try {
