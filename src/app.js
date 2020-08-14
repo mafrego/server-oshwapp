@@ -73,7 +73,7 @@ app.listen(PORT, () => {
 // console.log('process.env.PORT: '+ process.env.PORT)
 
 //ABYME
-// the function to manage errors go to the end otherwise doesn't work!!!
+// function to manage errors go to the end otherwise doesn't work!!!
 app.use(function(err, req, res, next){
   if(err.code === "LIMIT_BOM_FILE_TYPE"){
     res.status(422).json({error: "Only csv files allowed"})
