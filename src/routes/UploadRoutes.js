@@ -17,9 +17,9 @@ module.exports = function(app) {
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     bomUpload.bomFileFilter,
-    bomUpload.csvFileValidate,
-    bomUpload.removeEmptyProperties,
-    FilesController.storeBom)
+    bomUpload.csvValidate,
+    bomUpload.uploadCsvFileToS3,
+    FilesController.loadCSV)
 
     app.post('/imagesupload/:projectId',   
     authJwt.verifyToken,
@@ -28,18 +28,5 @@ module.exports = function(app) {
     imagesUpload.syncImagesAtoms,
     imagesUpload.resizeAndUploadToS3Images,
     FilesController.uploadImages)
-
-    // testing
-    app.post('/single/',
-    authJwt.verifyToken,
-    authJwt.isAssemblerOrAdmin,
-    bomUpload.bomFileFilter,
-    FilesController.testSingleFile)
-    // testing
-    app.post('/multiple/',
-    authJwt.verifyToken,
-    authJwt.isAssemblerOrAdmin,
-    imagesUpload.multerFilter,
-    FilesController.testMultipleFiles)
 
 }

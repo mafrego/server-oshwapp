@@ -1,6 +1,24 @@
 const multer = require('multer');
 const CSVFileValidator = require('csv-file-validator')
 const fs = require('fs');
+const aws = require("aws-sdk");
+
+const BUCKET_NAME = process.env.BUCKET_NAME
+const AWSAccessKeyId = process.env.AWSAccessKeyId
+const AWSSecretKey = process.env.AWSSecretKey
+
+if (process.env.NODE_ENV === 'production') {
+  aws.config = new aws.Config();
+  aws.config.accessKeyId = AWSAccessKeyId
+  aws.config.secretAccessKey = AWSSecretKey
+  aws.config.region = 'eu-central-1'
+} else {
+  aws.config.update({
+    accessKeyId: AWSAccessKeyId,
+    secretAccessKey: AWSSecretKey,
+    region: 'eu-central-1'
+  })
+}
 
 const bomFilter = (req, file, cb) => {
 
@@ -28,7 +46,7 @@ const bomUpload = multer({
 // the name 'file' comes from formData.append("file", this.file); in Vue component
 const uploadBOM = bomUpload.single('file')
 
-function isValidString(str){
+function isValidString(str) {
   const patter = /^[0-9a-zA-Z_]+$/;    // only alphanumericals and underscores
   return patter.test(str)
 }
@@ -37,7 +55,7 @@ function isValidString(str){
 const config = {
   headers: [
     {
-      name: 'atom name',
+      name: 'name',
       inputName: 'name',
       required: true,
       requiredError: function (headerName, rowNumber, columnNumber) {
@@ -48,23 +66,23 @@ const config = {
       uniqueError: function (headerName) {
         return `${headerName} is not unique`
       },
-      validate: function(str){
+      validate: function (str) {
         return isValidString(str)
       }
     },
     // TODO add validate function for alphanumericals, underscores, hyphens, dots and blank spaces
     {
-      name: 'atom description',
+      name: 'description',
       inputName: 'description',
       required: true
     },
-    { 
+    {
       name: 'quantity',
       inputName: 'quantity',
       required: true
     },
     {
-      name: 'cost unit',
+      name: 'cost',
       inputName: 'costUnit',
       required: true
     },
@@ -86,18 +104,18 @@ const config = {
     },
     // TODO add validation function for urls
     {
-      name: 'vendor URL',
+      name: 'vendorURL',
       inputName: 'vendorUrl',
       required: false
     },
     // TODO add validation function for positive integers
     {
-      name: 'minimum order quantity',
+      name: 'moq',
       inputName: 'moq',
       required: false
     },
     {
-      name: 'lead time',
+      name: 'leadtime',
       inputName: 'leadTime',
       required: false
     },
@@ -112,7 +130,7 @@ const config = {
       required: false
     },
     {
-      name: 'weight unit',
+      name: 'weightunit',
       inputName: 'weightUnit',
       required: false
     },
@@ -129,11 +147,6 @@ const csvValidate = async (req, res, next) => {
   try {
     let stream = fs.createReadStream(req.file.path);
     const result = await CSVFileValidator(stream, config)
-      .then(ret => {
-        fs.unlinkSync(req.file.path);       //remove file
-        return ret;
-      })
-      // console.log(result)
     if (result.inValidMessages.length) {
       throw result.inValidMessages
     } else {
@@ -146,20 +159,47 @@ const csvValidate = async (req, res, next) => {
   }
 }
 
+// if csv validation passed, save file to S3 and then remove .csv file stored locally
+const uploadCsvFileToS3 = async (req, res, next) => {
+  try {
+    const folderName = req.params.projectId
+    const s3 = new aws.S3()
+    const pathName = `${folderName}/bom.csv`;
+    let stream = fs.createReadStream(req.file.path);
+
+    await s3.upload({
+      Bucket: BUCKET_NAME,
+      Key: pathName,
+      Body: stream,
+      ContentType: 'text/csv',
+      ACL: 'public-read'
+    }).promise()
+
+    console.log("removing .csv file from server...")
+    fs.unlinkSync(req.file.path)    //remove file
+
+    next()
+  } catch (error) {
+    console.log(error)
+    res.status(422).send({ msg: 'error in uploading bom.csv to S3' })
+  }
+}
+
+
 // for each object in req.result remove all properties with empty string
 // otherwise neode gives empty string error while creating new node 
-const removeEmptyProperties = (req, res, next) => {
-  const cleaned = req.result.data.map( obj =>  { 
-    Object.keys(obj).forEach( k => { if(obj[k] === '') delete obj[k]})
-    return obj
-   })
-  //  console.log(cleaned)
-   req.result.data = cleaned
-   next()
-}
+// KEEP IT!!! in case you need the logic later
+// const removeEmptyProperties = (req, res, next) => {
+//   const cleaned = req.result.data.map(obj => {
+//     Object.keys(obj).forEach(k => { if (obj[k] === '') delete obj[k] })
+//     return obj
+//   })
+//   req.result.data = cleaned
+//   next()
+// }
 
 module.exports = {
   bomFileFilter: uploadBOM,
-  csvFileValidate: csvValidate,
-  removeEmptyProperties : removeEmptyProperties
+  csvValidate: csvValidate,
+  uploadCsvFileToS3: uploadCsvFileToS3,
 };
