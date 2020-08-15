@@ -165,6 +165,8 @@ module.exports = {
     // delete all relative products and images in s3
     async delete(req, res) {
         try {
+            // TODO add variable const projectId = req.params.id or use projectJson.uuid
+            
             //delete all nodes with relationship consist_of(atoms)
             const project = await db.model('Project').find(req.params.id)
             const projectJson = await project.toJson()
@@ -200,11 +202,11 @@ module.exports = {
                 })
             )
 
-            // TODO add logic for assembly images
+            // DELETE all images in S3 bucket
             // array of objects(imagename.png) to delete on s3
             if (atoms.length > 0) {         // Objects must not be empty otherwise s3 error
                 const imageNames = projectJson.consists_of.map(el => el.node.name)
-                const Objects = imageNames.map(name => ({ Key: req.params.id + "/" + name + ".png" }))
+                const Objects = imageNames.map(name => ({ Key: req.params.id + "/images/" + name + ".png" }))
                 // console.log(Objects)
                 const toDelete = {
                     Bucket: BUCKET_NAME,
@@ -223,7 +225,7 @@ module.exports = {
 
             if (assemblies.length > 0) {         // Objects must not be empty otherwise s3 error
                 const imageNames = projectJson.refers_to.map(el => el.node.name)
-                const Objects = imageNames.map(name => ({ Key: req.params.id + "/" + name + ".png" }))
+                const Objects = imageNames.map(name => ({ Key: req.params.id + "/images/" + name + ".png" }))
                 // console.log(Objects)
                 const toDelete = {
                     Bucket: BUCKET_NAME,
@@ -240,6 +242,7 @@ module.exports = {
                 })
             }
 
+            // TODO add logic to delete bom.csv in S3 bucket
 
             // finally delete project node itself
             await project.delete()
