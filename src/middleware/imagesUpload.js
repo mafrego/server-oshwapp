@@ -97,7 +97,9 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
 
         const filename = file.originalname.replace(/\..+$/, "");
         // to add folder in aws s3 bucket just add folderName/anotherFolderName/imgName.png
-        const pathName = `${folderName}/${filename}.png`;
+        // TODO change to:
+        const pathName = `${folderName}/images/${filename}.png`;
+        // const pathName = `${folderName}/${filename}.png`;
 
         const buffer = await sharp(file.buffer)
           .resize(256, 256)
@@ -114,7 +116,7 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
           ACL: 'public-read'
         }).promise()
 
-        // TODO: get all nodes from CONSISTS_OF of project with that name and
+        // REFACTORING you need {uuid: uuid}
         // add image url
         await db.mergeOn('Product', {name: filename}, {imageUrl: s3res.Location})
 
