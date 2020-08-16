@@ -35,8 +35,8 @@ const imageFilter = (req, file, cb) => {
   cb(null, true)
 }
 
-// TODO set ing size limit
-const MAX_IMG_SIZE = 500000
+// max size of single image is 30K, on average 17K
+const MAX_IMG_SIZE = 50000
 const imagesUpload = multer({
   // dest: './uploads',
   storage: multerStorage,
@@ -49,7 +49,10 @@ const imagesUpload = multer({
 // the name 'files' comes from formData.append("files", file); in Vue component + #max uploaded files
 const uploadImages = imagesUpload.array("files", 1000);
 
+// make req.files match to actual nodes
 const syncImagesAtoms = async (req, res, next) => {
+
+  // console.log('req.files.length before sync:', req.files.length)
 
   try {
     const project = await db.model('Project').find(req.params.projectId)
@@ -76,6 +79,7 @@ const syncImagesAtoms = async (req, res, next) => {
     })
 
     req.files = filteredAtomImgNames.concat(filteredAssemblyImgNames)
+    // console.log('req.files.length after sync:', req.files.length)
 
     next()
   } catch (error) {
@@ -92,14 +96,15 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
     const folderName = req.params.projectId
     const s3 = new aws.S3()
 
+    // console.log(req.files)
+
     req.results = await Promise.all(
       req.files.map(async file => {
 
         const filename = file.originalname.replace(/\..+$/, "");
+
         // to add folder in aws s3 bucket just add folderName/anotherFolderName/imgName.png
-        // TODO change to:
         const pathName = `${folderName}/images/${filename}.png`;
-        // const pathName = `${folderName}/${filename}.png`;
 
         const buffer = await sharp(file.buffer)
           .resize(256, 256)
@@ -107,7 +112,7 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
           // .png({ quality: 90 })
           .toBuffer()
 
-        // remember to add ContentType: .... otherwise aws-s3 doesn't display picture but ask to dowload
+        // remember to add ContentType: .... otherwise aws-s3 doesn't display picture but ask to download it
         const s3res = await s3.upload({
           Bucket: BUCKET_NAME,
           Key: pathName,
@@ -115,10 +120,6 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
           ContentType: 'image/png',
           ACL: 'public-read'
         }).promise()
-
-        // REFACTORING you need {uuid: uuid}
-        // add image url
-        await db.mergeOn('Product', {name: filename}, {imageUrl: s3res.Location})
 
         return s3res
       })
@@ -129,30 +130,6 @@ const resizeAndUploadToS3Images = async (req, res, next) => {
     res.status(422).send({ msg: 'error in resizing and uploading to S3' })
   }
 };
-
-// just for testing sharp
-// const resizeImages = async (req, res, next) => {
-
-//   if (!req.files) return next();
-//   req.body.images = [];
-
-//   await Promise.all(
-//     req.files.map(async file => {
-//       // const filename = file.originalname.replace(/\..+$/, "");
-//       const pathName = `${file.originalname}.png`;
-
-//       await sharp(file.buffer)
-//         .resize(256, 256)
-//         .toFormat("png")
-//         .png({ quality: 90 })
-//         .toFile(`./uploads/${pathName}`);
-
-//       req.body.images.push(pathName);
-//     })
-//   );
-
-//   next();
-// };
 
 module.exports = {
   multerFilter: uploadImages,
