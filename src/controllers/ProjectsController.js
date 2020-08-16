@@ -167,6 +167,8 @@ module.exports = {
         try {
             // TODO add variable const projectId = req.params.id or use projectJson.uuid
             
+            // TODO check if it is faster to delete with a cypher query something like:
+            // find all nodes linked to project and delete them
             //delete all nodes with relationship consist_of(atoms)
             const project = await db.model('Project').find(req.params.id)
             const projectJson = await project.toJson()
@@ -185,6 +187,8 @@ module.exports = {
                     }
                 })
             )
+
+            // TODO same as above
             //delete all nodes with relationship refers_to(assemblies)
             const assemblies = projectJson.refers_to.map(el => el.node)
             await Promise.all(
@@ -219,7 +223,10 @@ module.exports = {
                 const s3 = new aws.S3()
                 s3.deleteObjects(toDelete, function (err, data) {
                     if (err) console.log(err, err.stack)
-                    else console.log(data)
+                    else { 
+                        // console.log(data)
+                        return data
+                    }
                 })
             }
 
@@ -238,11 +245,41 @@ module.exports = {
                 const s3 = new aws.S3()
                 s3.deleteObjects(toDelete, function (err, data) {
                     if (err) console.log(err, err.stack)
-                    else console.log(data)
+                    else { 
+                        // console.log(data)
+                        return data
+                    }
                 })
             }
 
-            // TODO add logic to delete bom.csv in S3 bucket
+            // TODO add logic to delete folder with bom.csv in S3 bucket
+            const s3 = new aws.S3()
+            const bom = req.params.id+"/bom.csv"
+            const toDelete = {
+                Bucket: BUCKET_NAME,
+                Key: bom
+            }
+            s3.deleteObject( toDelete, function(err, data){
+                if(err) console.log(err)
+                else {
+                    // console.log(data)
+                    return data
+                }
+            })
+
+            // delete empty folder
+            const emptyFolder = req.params.id+'/'
+            const folderToDelete = {
+                Bucket: BUCKET_NAME,
+                Key: emptyFolder
+            } 
+            s3.deleteObject( folderToDelete, function(err, data){
+                if(err) console.log(err)
+                else {
+                    // console.log(data)
+                    return data
+                }
+            })
 
             // finally delete project node itself
             await project.delete()
@@ -257,7 +294,9 @@ module.exports = {
             });
         }
     },
-
+ 
+    // TODO try to see if using cypher query it is faster 
+    // if so use it for deleting project atoms/products as well
     async deleteBom(req, res) {
         try {
             const project = await db.model('Project').find(req.params.id)
