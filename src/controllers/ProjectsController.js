@@ -128,10 +128,12 @@ module.exports = {
             if (newstate === 'released') {
                 await db.mergeOn('Project',
                     { uuid: projectId },
-                    { state: newstate, has_root: [{ 
-                        version: req.body.version, 
-                        node: req.body.assemblyID 
-                    }] }
+                    {
+                        state: newstate, has_root: [{
+                            version: req.body.version,
+                            node: req.body.assemblyID
+                        }]
+                    }
                 )
             } else {
                 await project.update({ state: newstate })
@@ -162,52 +164,49 @@ module.exports = {
         }
     },
 
+    // using cypher quesry beacuse it is much faster
+    async deleteBom(req, res) {
+        const projectId = req.params.id
+        try {
+            await db.cypher(
+                'MATCH (project:Project {uuid: $projectId}), \
+                (project)-[:CONSISTS_OF]->(atom:Atom) \
+                DETACH DELETE atom',
+                { projectId: projectId }
+            ).then(() => res.status(200).send({ msg: `bom of project:${projectId} has been deleted` }))
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: `An error has occured trying to delete bom of project:${projectId}`
+            });
+        }
+    },
+
     // delete all relative products and images in s3
     async delete(req, res) {
+        const projectId = req.params.id
         try {
-            // TODO add variable const projectId = req.params.id or use projectJson.uuid
-            
-            // TODO check if it is faster to delete with a cypher query something like:
-            // find all nodes linked to project and delete them
-            //delete all nodes with relationship consist_of(atoms)
-            const project = await db.model('Project').find(req.params.id)
+
+            const project = await db.model('Project').find(projectId)
             const projectJson = await project.toJson()
             const atoms = projectJson.consists_of.map(el => el.node)
-            await Promise.all(
-                atoms.map(async atom => {
-                    try {
-                        const atomToDelete = await db.model('Atom').find(atom.uuid)
-                        await atomToDelete.delete()
-                        // console.log(`deleted atom with uuid:${atom.uuid}`)
-                    } catch (error) {
-                        console.log(error)
-                        res.status(500).send({
-                            error: `An error has occured trying to delete the atom with uuid:${atom.uuid}`
-                        });
-                    }
-                })
-            )
-
-            // TODO same as above
-            //delete all nodes with relationship refers_to(assemblies)
             const assemblies = projectJson.refers_to.map(el => el.node)
-            await Promise.all(
-                assemblies.map(async assembly => {
-                    try {
-                        const assemblyToDelete = await db.model('Assembly').find(assembly.uuid)
-                        await assemblyToDelete.delete()
-                        // console.log(`deleted assembly with uuid:${assembly.uuid}`)
-                    } catch (error) {
-                        console.log(error)
-                        res.status(500).send({
-                            error: `An error has occured trying to delete the assembly with uuid:${assembly.uuid}`
-                        });
-                    }
-                })
+
+            await db.cypher(
+                'MATCH (project:Project {uuid: $projectId}), \
+                (project)-[:CONSISTS_OF]->(atom:Atom) \
+                DETACH DELETE atom',
+                { projectId: projectId }
+            )
+            await db.cypher(
+                'MATCH (project:Project {uuid: $projectId}), \
+                (project)-[:REFERS_TO]->(assembly:Assembly) \
+                DETACH DELETE assembly',
+                { projectId: projectId }
             )
 
             // DELETE all images in S3 bucket
-            // array of objects(imagename.png) to delete on s3
+            // you need to check that there are images stored on S3
             if (atoms.length > 0) {         // Objects must not be empty otherwise s3 error
                 const imageNames = projectJson.consists_of.map(el => el.node.name)
                 const Objects = imageNames.map(name => ({ Key: req.params.id + "/images/" + name + ".png" }))
@@ -222,8 +221,8 @@ module.exports = {
 
                 const s3 = new aws.S3()
                 s3.deleteObjects(toDelete, function (err, data) {
-                    if (err) console.log(err, err.stack)
-                    else { 
+                    if (err) console.log('deleting atom images: ',err, err.stack)
+                    else {
                         // console.log(data)
                         return data
                     }
@@ -244,8 +243,8 @@ module.exports = {
 
                 const s3 = new aws.S3()
                 s3.deleteObjects(toDelete, function (err, data) {
-                    if (err) console.log(err, err.stack)
-                    else { 
+                    if (err) console.log('deleting assembliy images: ',err, err.stack)
+                    else {
                         // console.log(data)
                         return data
                     }
@@ -254,13 +253,13 @@ module.exports = {
 
             // TODO add logic to delete folder with bom.csv in S3 bucket
             const s3 = new aws.S3()
-            const bom = req.params.id+"/bom.csv"
+            const bom = req.params.id + "/bom.csv"
             const toDelete = {
                 Bucket: BUCKET_NAME,
                 Key: bom
             }
-            s3.deleteObject( toDelete, function(err, data){
-                if(err) console.log(err)
+            s3.deleteObject(toDelete, function (err, data) {
+                if (err) console.log('deleting bom.csv:', err, err.stack)
                 else {
                     // console.log(data)
                     return data
@@ -268,13 +267,13 @@ module.exports = {
             })
 
             // delete empty folder
-            const emptyFolder = req.params.id+'/'
+            const emptyFolder = req.params.id + '/'
             const folderToDelete = {
                 Bucket: BUCKET_NAME,
                 Key: emptyFolder
-            } 
-            s3.deleteObject( folderToDelete, function(err, data){
-                if(err) console.log(err)
+            }
+            s3.deleteObject(folderToDelete, function (err, data) {
+                if (err) console.log('deleting empty project folder: ', err, err.stack)
                 else {
                     // console.log(data)
                     return data
@@ -283,10 +282,8 @@ module.exports = {
 
             // finally delete project node itself
             await project.delete()
-            // console.log(`deleted project with uuid:${req.params.id}`);
-            res.status(200).send({ msg: `project with uuid:${req.params.id} has been deleted` });
-            // console.log(response)
-            // res.status(200).send(response);
+
+            res.status(200).send({ msg: `project with uuid:${projectId} has been deleted` });
         } catch (error) {
             console.log(error);
             res.status(500).send({
@@ -294,35 +291,5 @@ module.exports = {
             });
         }
     },
- 
-    // TODO try to see if using cypher query it is faster 
-    // if so use it for deleting project atoms/products as well
-    async deleteBom(req, res) {
-        try {
-            const project = await db.model('Project').find(req.params.id)
-            const projectJson = await project.toJson()
-            const atoms = projectJson.consists_of.map(el => el.node)
-            await Promise.all(
-                atoms.map(async atom => {
-                    try {
-                        const atomToDelete = await db.model('Atom').find(atom.uuid)
-                        await atomToDelete.delete()
-                        // console.log(`deleted atom with uuid:${atom.uuid}`)
-                    } catch (error) {
-                        console.log(error)
-                        res.status(500).send({
-                            error: `An error has occured trying to delete the atom with uuid:${atom.uuid}`
-                        });
-                    }
-                })
-            )
-            res.status(200).send({ msg: `bom of project:${req.params.id} has been deleted` });
-        } catch (error) {
-            console.log(error);
-            res.status(500).send({
-                error: `An error has occured trying to delete bom of project:${req.params.id}`
-            });
-        }
-    }
 
 }
