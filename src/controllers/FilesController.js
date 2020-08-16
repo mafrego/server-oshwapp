@@ -66,14 +66,14 @@ module.exports = {
     //     }
     // },
 
-    // function to load csv to neo4j
+    // function to load bom.csv to neo4j + add uuid + add quantity_to_assemble + add imageUrl
     async loadCSV(req, res) {
         try {
             const projectId = req.params.projectId
-            const path = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/bom.csv`
-            // console.log('path:',path)
-            const ret = await db.cypher(
-                'LOAD CSV WITH HEADERS FROM $path AS line \
+            const bomPath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/bom.csv`
+            const imagePath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/images/`
+            await db.cypher(
+                'LOAD CSV WITH HEADERS FROM $bomPath AS line \
                  MATCH (project:Project { uuid: $projectId}) \
                  CREATE ( \
                         atom:Atom:Product { \
@@ -92,19 +92,21 @@ module.exports = {
                         material: line.material, \
                         weight: line.weight, \
                         weightUnit: line.weightunit, \
-                        notes: line.notes \
+                        notes: line.notes, \
+                        imageUrl: $imagePath + line.name + ".png" \
                         }  \
                     ) \
                 CREATE (project)-[:CONSISTS_OF]->(atom)',
-                { projectId: projectId, path: path }
+                { projectId: projectId, bomPath: bomPath, imagePath: imagePath }
             ).then(() => res.status(201).send({ msg: "BOM uploaded and sotored on db" }))
-            console.log(ret)
+            // console.log(ret)
         } catch (error) {
             console.log(error);
             res.status(400).send(error)
         }
     },
 
+    // TODO remove async and try/catch
     async uploadImages(req, res) {
         try {
             if (req.results.length <= 0) {
@@ -112,7 +114,7 @@ module.exports = {
             }
             res.status(201).send({
                 message: 'Images uploaded!',
-                s3responses: req.results
+                // s3responses: req.results
             })
         } catch (error) {
             console.log(error)
