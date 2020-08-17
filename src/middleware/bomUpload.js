@@ -46,6 +46,8 @@ const bomUpload = multer({
 // the name 'file' comes from formData.append("file", this.file); in Vue component
 const uploadBOM = bomUpload.single('file')
 
+//TODO find a way to put all the following function into a service module
+
 function isAlphanumericString(str) {
   const pattern = /^[-0-9a-zA-Z_]+$/;     //plus hyphens and underscores
   return pattern.test(str)
@@ -76,6 +78,10 @@ function isURL(str) {
   return pattern.test(str)
 }
 
+function isDurationISO8601(str) {
+  const pattern = /^P(?!$)(\d+(?:\.\d+)?Y)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?W)?(\d+(?:\.\d+)?D)?(T(?=\d)(\d+(?:\.\d+)?H)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?S)?)?$/
+  return pattern.test(str)
+}
 
 const config = {
   headers: [
@@ -180,7 +186,7 @@ const config = {
       inputName: 'leadTime',          //in hours
       required: false,
       validate: function (str) {
-        if (str) return isPositiveInt(str)
+        if (str) return isDurationISO8601(str)
         else return true
       }
     },
