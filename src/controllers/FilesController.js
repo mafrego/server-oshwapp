@@ -80,17 +80,17 @@ module.exports = {
                         name: line.name, \
                         description: line.description, \
                         uuid: apoc.create.uuid(),  \
-                        quantity: line.quantity, \
-                        quantity_to_assemble: line.quantity, \
-                        cost: line.cost, \
+                        quantity: toInteger(line.quantity), \
+                        quantity_to_assemble: toInteger(line.quantity), \
+                        cost: toFloat(line.cost), \
                         currency: line.currency, \
                         code: line.code, \
                         link: line.link, \
                         vendorUrl: line.vendorUrl, \
-                        moq: line.moq, \
-                        leadTime: line.leadtime, \
+                        moq: toInteger(line.moq), \
+                        leadTime: duration(line.leadtime), \
                         material: line.material, \
-                        weight: line.weight, \
+                        weight: toFloat(line.weight), \
                         notes: line.notes, \
                         imageUrl: $imagePath + line.name + ".png" \
                         }  \
