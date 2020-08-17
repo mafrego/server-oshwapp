@@ -47,27 +47,36 @@ const bomUpload = multer({
 const uploadBOM = bomUpload.single('file')
 
 function isAlphanumericString(str) {
-  const patter = /^[0-9a-zA-Z_]+$/;  
-  return patter.test(str)
+  const pattern = /^[-0-9a-zA-Z_]+$/;     //plus hyphens and underscores
+  return pattern.test(str)
 }
 
 function isDescriptionString(str) {
-  const patter = /^[-a-zA-Z0-9 _.]*$/;  
-  return patter.test(str)
+  const pattern = /^[-a-zA-Z0-9 _.]*$/;
+  return pattern.test(str)
 }
 
 function isPositiveInt(str) {
-  const patter = /^[0-9]*[1-9][0-9]*$/;  
-  return patter.test(str)
+  const pattern = /^[0-9]*[1-9][0-9]*$/;
+  return pattern.test(str)
 }
 
 function isPositiveFloat(str) {
-  const patter = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/;  
-  return patter.test(str)
+  const pattern = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/;
+  return pattern.test(str)
+}
+
+function isISO4217(str) {
+  const pattern = /[A-Z]{3}/;
+  return pattern.test(str)
+}
+
+function isURL(str) {
+  const pattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
+  return pattern.test(str)
 }
 
 
-// TODO add validation functions for single inputs
 const config = {
   headers: [
     {
@@ -77,7 +86,6 @@ const config = {
       requiredError: function (headerName, rowNumber, columnNumber) {
         return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
       },
-      // comment for testing
       unique: true,
       uniqueError: function (headerName) {
         return `${headerName} is not unique`
@@ -90,6 +98,9 @@ const config = {
       name: 'description',
       inputName: 'description',
       required: true,
+      requiredError: function (headerName, rowNumber, columnNumber) {
+        return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
+      },
       validate: function (str) {
         return isDescriptionString(str)
       }
@@ -98,6 +109,9 @@ const config = {
       name: 'quantity',
       inputName: 'quantity',
       required: true,
+      requiredError: function (headerName, rowNumber, columnNumber) {
+        return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
+      },
       validate: function (str) {
         return isPositiveInt(str)
       }
@@ -106,6 +120,9 @@ const config = {
       name: 'cost',
       inputName: 'cost',
       required: true,
+      requiredError: function (headerName, rowNumber, columnNumber) {
+        return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
+      },
       validate: function (str) {
         return isPositiveFloat(str)
       }
@@ -113,55 +130,86 @@ const config = {
     {
       name: 'currency',
       inputName: 'currency',
-      required: true
+      required: true,
+      validate: function (str) {
+        return isISO4217(str)
+      }
     },
     {
       name: 'code',
       inputName: 'code',
-      required: false
+      unique: false,
+      uniqueError: function (headerName) {
+        return `${headerName} is not unique`
+      },
+      required: false,
+      validate: function (str) {
+        if (str) return isAlphanumericString(str)
+        else return true
+      }
     },
-    // TODO add validation function for urls
     {
       name: 'link',
       inputName: 'link',
-      required: false
+      required: false,
+      validate: function (str) {
+        if (str) return isURL(str)
+        else return true
+      }
     },
-    // TODO add validation function for urls
     {
       name: 'vendorURL',
       inputName: 'vendorUrl',
-      required: false
+      required: false,
+      validate: function (str) {
+        if (str) return isURL(str)
+        else return true
+      }
     },
-    // TODO add validation function for positive integers
     {
       name: 'moq',
       inputName: 'moq',
-      required: false
+      required: false,
+      validate: function (str) {
+        if (str) return isPositiveInt(str)
+        else return true
+      }
     },
     {
       name: 'leadtime',
-      inputName: 'leadTime',
-      required: false
+      inputName: 'leadTime',          //in hours
+      required: false,
+      validate: function (str) {
+        if (str) return isPositiveInt(str)
+        else return true
+      }
     },
     {
       name: 'material',
       inputName: 'material',
-      required: false
+      required: false,
+      validate: function (str) {
+        if (str) return isAlphanumericString(str)
+        else return true
+      }
     },
     {
       name: 'weight',
-      inputName: 'weight',
-      required: false
-    },
-    {
-      name: 'weightunit',
-      inputName: 'weightUnit',
-      required: false
+      inputName: 'weight',          //in Kg
+      required: false,
+      validate: function (str) {
+        if (str) return isPositiveFloat(str)
+        else return true
+      }
     },
     {
       name: 'notes',
       inputName: 'notes',
-      required: false
+      required: false,
+      validate: function (str) {
+        if (str) return isDescriptionString(str)
+        else return true
+      }
     },
   ]
 }
