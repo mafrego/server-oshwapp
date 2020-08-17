@@ -21,13 +21,13 @@ module.exports = {
         }
     },
     moq: 'int',
-    leadTime: 'duration',
+    leadTime: 'duration',       //in hours
     notes: 'string',
     quantity: 'int',
     quantity_to_assemble: 'int',
     material: 'string',
-    weight: 'float',
-    weightUnit: 'string',
+    weight: 'float',        //in Kg
+    // weightUnit: 'string',
     cost: 'float',
     currency: 'string',
     license: 'string',      //is it necesary, does it make sense?
@@ -37,6 +37,7 @@ module.exports = {
             scheme: ['http', 'https', 'file']
         }
     },
+    // I don't think that this relationship makes sense
     built_with: {
         type: "relationships",
         target: "Product",
