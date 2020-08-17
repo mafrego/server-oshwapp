@@ -46,10 +46,26 @@ const bomUpload = multer({
 // the name 'file' comes from formData.append("file", this.file); in Vue component
 const uploadBOM = bomUpload.single('file')
 
-function isValidString(str) {
-  const patter = /^[0-9a-zA-Z_]+$/;    // only alphanumericals and underscores
+function isAlphanumericString(str) {
+  const patter = /^[0-9a-zA-Z_]+$/;  
   return patter.test(str)
 }
+
+function isDescriptionString(str) {
+  const patter = /^[-a-zA-Z0-9 _.]*$/;  
+  return patter.test(str)
+}
+
+function isPositiveInt(str) {
+  const patter = /^[0-9]*[1-9][0-9]*$/;  
+  return patter.test(str)
+}
+
+function isPositiveFloat(str) {
+  const patter = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/;  
+  return patter.test(str)
+}
+
 
 // TODO add validation functions for single inputs
 const config = {
@@ -59,7 +75,7 @@ const config = {
       inputName: 'name',
       required: true,
       requiredError: function (headerName, rowNumber, columnNumber) {
-        return `${headerName} is required in the ${rowNumber} row / ${columnNumber} column`
+        return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
       },
       // comment for testing
       unique: true,
@@ -67,24 +83,32 @@ const config = {
         return `${headerName} is not unique`
       },
       validate: function (str) {
-        return isValidString(str)
+        return isAlphanumericString(str)
       }
     },
-    // TODO add validate function for alphanumericals, underscores, hyphens, dots and blank spaces
     {
       name: 'description',
       inputName: 'description',
-      required: true
+      required: true,
+      validate: function (str) {
+        return isDescriptionString(str)
+      }
     },
     {
       name: 'quantity',
       inputName: 'quantity',
-      required: true
+      required: true,
+      validate: function (str) {
+        return isPositiveInt(str)
+      }
     },
     {
       name: 'cost',
-      inputName: 'costUnit',
-      required: true
+      inputName: 'cost',
+      required: true,
+      validate: function (str) {
+        return isPositiveFloat(str)
+      }
     },
     {
       name: 'currency',
