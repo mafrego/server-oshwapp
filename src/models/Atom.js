@@ -30,7 +30,6 @@ module.exports = {
     // weightUnit: 'string',
     cost: 'float',
     currency: 'string',
-    license: 'string',      //is it necesary, does it make sense?
     imageUrl: {
         type: "string",
         uri: {
