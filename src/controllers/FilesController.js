@@ -91,7 +91,6 @@ module.exports = {
                         leadTime: line.leadtime, \
                         material: line.material, \
                         weight: line.weight, \
-                        weightUnit: line.weightunit, \
                         notes: line.notes, \
                         imageUrl: $imagePath + line.name + ".png" \
                         }  \
