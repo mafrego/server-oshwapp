@@ -28,7 +28,7 @@ module.exports = {
     material: 'string',
     weight: 'float',
     weightUnit: 'string',
-    costUnit: 'float',
+    cost: 'float',
     currency: 'string',
     license: 'string',      //is it necesary, does it make sense?
     imageUrl: {
