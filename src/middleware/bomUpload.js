@@ -135,7 +135,7 @@ const config = {
     },
     {
       name: 'currency',
-      inputName: 'currency',
+      inputName: 'currency',      //ISO 4217
       required: true,
       validate: function (str) {
         return isISO4217(str)
@@ -183,7 +183,7 @@ const config = {
     },
     {
       name: 'leadtime',
-      inputName: 'leadTime',          //in hours
+      inputName: 'leadTime',          //ISO 8601
       required: false,
       validate: function (str) {
         if (str) return isDurationISO8601(str)
