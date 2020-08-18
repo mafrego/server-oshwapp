@@ -21,31 +21,18 @@ module.exports = {
         }
     },
     moq: 'int',
-    leadTime: 'duration',       //in hours
+    leadTime: 'duration',       //IS0 8601
     notes: 'string',
     quantity: 'int',
     quantity_to_assemble: 'int',
     material: 'string',
     weight: 'float',        //in Kg
-    // weightUnit: 'string',
     cost: 'float',
-    currency: 'string',
+    currency: 'string',     // ISO 4217
     imageUrl: {
         type: "string",
         uri: {
-            scheme: ['http', 'https', 'file']
+            scheme: ['http', 'https']
         }
     },
-    // I don't think that this relationship makes sense
-    built_with: {
-        type: "relationships",
-        target: "Product",
-        relationship: "BUILT_WITH",
-        direction: "out",
-        properties: {
-            quantity: 'int',
-            duration: 'duration'
-        },
-        eager: true // <-- eager load this relationship
-    }
 }
