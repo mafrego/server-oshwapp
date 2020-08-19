@@ -96,8 +96,9 @@ module.exports = {
     async delete(req, res) {
         try {
             const atom = await db.model('Atom').find(req.params.id)
-            await atom.delete()
-            res.status(200).send({ msg: `atom with uuid:${req.params.id} has been deleted` });
+            const response = await atom.delete()
+            const json = await response.toJson()
+            res.status(200).send(json);
         } catch (error) {
             console.log(error);
             res.status(500).send({
