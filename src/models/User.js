@@ -8,6 +8,10 @@ module.exports = {
     username: 'string',
     email: 'string',
     password: 'string',
+    description: {
+        required: false,
+        type: 'string'
+    },
     has_role: {
         type: "relationships",
         target: "Role",
