@@ -35,4 +35,12 @@ module.exports = function(app) {
     authJwt.isAdmin,
     controller.adminBoard
   );
+
+  app.put(
+    "/user",
+    authJwt.verifyToken,
+    authJwt.isAssembler,
+    controller.update
+  );
+
 };
