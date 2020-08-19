@@ -79,7 +79,7 @@ module.exports = {
     // check if after updating pre-existing relationships are kept
     async update(req, res) {
         try {
-            // console.log(req.body)
+            console.log(req.body)
             const atom = await db.model('Atom').find(req.body.uuid)
             const atomUpdated = await atom.update(req.body)
             const json = await atomUpdated.toJson()
