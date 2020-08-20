@@ -96,9 +96,8 @@ module.exports = {
                         }  \
                     ) \
                 CREATE (project)-[:CONSISTS_OF]->(atom)',
-                { projectId: projectId, bomPath: bomPath, imagePath: imagePath }
-            ).then(() => res.status(201).send({ msg: "BOM uploaded and sotored on db" }))
-            // console.log(ret)
+                { projectId: projectId, bomPath: bomPath, imagePath: imagePath })
+            .then(() => res.status(201).send({ msg: "BOM uploaded and sotored on db" }))
         } catch (error) {
             console.log(error);
             res.status(400).send(error)
