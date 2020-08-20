@@ -39,7 +39,7 @@ module.exports = {
 
     async post(req, res) {
         try {
-            console.log(req.body)
+            // console.log(req.body)
             req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/test/"+req.body.name+".png"
             const atom = await db.model('Atom').create(req.body)
             const json = await atom.toJson()
@@ -63,10 +63,10 @@ module.exports = {
                 db.find('Project', projectID),
                 db.create('Atom', atom)
             ])
-            console.log(response)
+            // console.log(response)
             await response[0].relateTo( response[1], 'consists_of')
             const json = await response[1].toJson()
-            console.log(json)
+            // console.log(json)
             res.status(201).send(json)
         } catch (error) {
             console.log(error);
@@ -79,7 +79,7 @@ module.exports = {
     // check if after updating pre-existing relationships are kept
     async update(req, res) {
         try {
-            console.log(req.body)
+            // console.log(req.body)
             const atom = await db.model('Atom').find(req.body.uuid)
             const atomUpdated = await atom.update(req.body)
             const json = await atomUpdated.toJson()
