@@ -31,10 +31,15 @@ module.exports = function(app) {
     authJwt.isAssemblerOrAdmin,
     ProjectsController.createProject)
 
-    app.put('/project/:id',   
+    app.put('/projectstate/:id',   
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     ProjectsController.updateProjectState)
+
+    app.put('/project/:id',   
+    authJwt.verifyToken,
+    authJwt.isAssemblerOrAdmin,
+    ProjectsController.updateProject)
 
     app.delete('/projects/:id', 
     authJwt.verifyToken,

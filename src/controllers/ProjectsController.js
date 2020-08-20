@@ -150,6 +150,23 @@ module.exports = {
         }
     },
 
+    async updateProject(req, res){
+        try {
+            const description = req.body.description
+            const projectId = req.params.id
+            const project = await db.model('Project').find(projectId)
+            const response = await project.update({ description: description})
+            const json = await response.toJson()
+            console.log(json)
+            res.status(200).send(json)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occured trying to update project metadata'
+            })
+        }
+    },
+
     async updateUser(req, res) {
         try {
             let user = null
