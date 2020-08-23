@@ -86,7 +86,7 @@ module.exports = {
                         currency: line.currency, \
                         code: line.code, \
                         link: line.link, \
-                        vendorUrl: line.vendorUrl, \
+                        vendorUrl: line.vendorURL, \
                         moq: toInteger(line.moq), \
                         leadTime: duration(line.leadtime), \
                         material: line.material, \
