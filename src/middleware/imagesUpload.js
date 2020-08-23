@@ -35,8 +35,8 @@ const imageFilter = (req, file, cb) => {
   cb(null, true)
 }
 
-// max size of single image is 30K, on average 17K
-const MAX_IMG_SIZE = 50000
+// max size of single image is 70K, on average 17K
+const MAX_IMG_SIZE = 70000
 const imagesUpload = multer({
   // dest: './uploads',
   storage: multerStorage,
