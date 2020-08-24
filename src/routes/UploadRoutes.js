@@ -21,6 +21,13 @@ module.exports = function(app) {
     bomUpload.uploadCsvFileToS3,
     FilesController.loadCSV)
 
+    app.post('/bomcheck/:projectId',   
+    authJwt.verifyToken,
+    authJwt.isAssemblerOrAdmin,
+    bomUpload.bomFileFilter,
+    bomUpload.csvValidate,
+    FilesController.confirmCSVValidation)
+
     app.post('/imagesupload/:projectId',   
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,

@@ -1,4 +1,5 @@
 const db = require('../db.js');
+const fs = require('fs');
 
 module.exports = {
 
@@ -66,6 +67,11 @@ module.exports = {
     //     }
     // },
 
+    confirmCSVValidation(req, res) {
+        fs.unlinkSync(req.file.path)    //remove file
+        res.status(200).send({ msg: "bom.csv valid!" })
+    },
+
     // function to load bom.csv to neo4j + add uuid + add quantity_to_assemble + add imageUrl
     async loadCSV(req, res) {
         try {
@@ -97,7 +103,7 @@ module.exports = {
                     ) \
                 CREATE (project)-[:CONSISTS_OF]->(atom)',
                 { projectId: projectId, bomPath: bomPath, imagePath: imagePath })
-            .then(() => res.status(201).send({ msg: "BOM uploaded and sotored on db" }))
+                .then(() => res.status(201).send({ msg: "BOM uploaded and sotored on db" }))
         } catch (error) {
             console.log(error);
             res.status(400).send(error)
