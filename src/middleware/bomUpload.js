@@ -86,6 +86,17 @@ function isDurationISO8601(str) {
 const config = {
   headers: [
     {
+      name: 'itemNumber',
+      inputName: 'itemNumber',
+      required: true,
+      requiredError: function (headerName, rowNumber, columnNumber) {
+        return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
+      },
+      validate: function (str) {
+        return isPositiveInt(str)
+      }
+    },
+    {
       name: 'name',
       inputName: 'name',
       required: true,
@@ -123,6 +134,15 @@ const config = {
       }
     },
     {
+      name: 'link',
+      inputName: 'link',
+      required: false,
+      validate: function (str) {
+        if (str) return isURL(str)
+        else return true
+      }
+    },
+    {
       name: 'cost',
       inputName: 'cost',
       required: true,
@@ -142,8 +162,8 @@ const config = {
       }
     },
     {
-      name: 'code',
-      inputName: 'code',
+      name: 'vendorCode',
+      inputName: 'vendorCode',
       unique: false,
       uniqueError: function (headerName) {
         return `${headerName} is not unique`
@@ -155,16 +175,7 @@ const config = {
       }
     },
     {
-      name: 'link',
-      inputName: 'link',
-      required: false,
-      validate: function (str) {
-        if (str) return isURL(str)
-        else return true
-      }
-    },
-    {
-      name: 'vendorURL',
+      name: 'vendorUrl',
       inputName: 'vendorUrl',
       required: false,
       validate: function (str) {
@@ -182,7 +193,7 @@ const config = {
       }
     },
     {
-      name: 'leadtime',
+      name: 'leadTime',
       inputName: 'leadTime',          //ISO 8601
       required: false,
       validate: function (str) {

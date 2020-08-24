@@ -83,6 +83,7 @@ module.exports = {
                  MATCH (project:Project { uuid: $projectId}) \
                  CREATE ( \
                         atom:Atom:Product { \
+                        itemNumber: toInteger(line.itemNumber), \
                         name: line.name, \
                         description: line.description, \
                         uuid: apoc.create.uuid(),  \
@@ -90,11 +91,11 @@ module.exports = {
                         quantity_to_assemble: toInteger(line.quantity), \
                         cost: toFloat(line.cost), \
                         currency: line.currency, \
-                        code: line.code, \
+                        vendorCode: line.vendorCode, \
                         link: line.link, \
-                        vendorUrl: line.vendorURL, \
+                        vendorUrl: line.vendorUrl, \
                         moq: toInteger(line.moq), \
-                        leadTime: duration(line.leadtime), \
+                        leadTime: duration(line.leadTime), \
                         material: line.material, \
                         weight: toFloat(line.weight), \
                         notes: line.notes, \
