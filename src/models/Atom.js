@@ -5,8 +5,9 @@ module.exports = {
         type: 'uuid',
         required: true, 
     },
+    itemNumber: 'int',
     name: 'string',
-    code: 'string',
+    vendorCode: 'string',
     description: 'string',
     link: {
         type: "string",
