@@ -226,6 +226,7 @@ const csvValidate = async (req, res, next) => {
     let stream = fs.createReadStream(req.file.path);
     const result = await CSVFileValidator(stream, config)
     if (result.inValidMessages.length) {
+      fs.unlinkSync(req.file.path)    //remove file
       throw result.inValidMessages
     } else {
       req.result = result
@@ -253,7 +254,7 @@ const uploadCsvFileToS3 = async (req, res, next) => {
       ACL: 'public-read'
     }).promise()
 
-    console.log("removing .csv file from server...")
+    // console.log("removing .csv file from server...")
     fs.unlinkSync(req.file.path)    //remove file
 
     next()
