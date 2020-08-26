@@ -53,8 +53,14 @@ function isAlphanumericString(str) {
   return pattern.test(str)
 }
 
+function isSKU(str) {
+  const pattern = /^[-0-9a-zA-Z_. /]+$/;     //plus hyphens, underscores, dots, blank spaces and slash 
+  return pattern.test(str)
+}
+
+// match everything except for comma and semicolon
 function isDescriptionString(str) {
-  const pattern = /^[-a-zA-Z0-9 _.]*$/;
+  const pattern = /[^,;]*$/;
   return pattern.test(str)
 }
 
@@ -73,6 +79,11 @@ function isISO4217(str) {
   return pattern.test(str)
 }
 
+function isGTIN(str) {
+  const pattern = /^(\d{8}|\d{12}|\d{13}|\d{14})$/;
+  return pattern.test(str)
+}
+
 function isURL(str) {
   const pattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
   return pattern.test(str)
@@ -83,6 +94,7 @@ function isDurationISO8601(str) {
   return pattern.test(str)
 }
 
+// shuffle header places not allowed on .csv file
 const config = {
   headers: [
     {
@@ -123,6 +135,15 @@ const config = {
       }
     },
     {
+      name: 'moq',
+      inputName: 'moq',
+      required: true,
+      validate: function (str) {
+        if (str) return isPositiveInt(str)
+        else return true
+      }
+    },
+    {
       name: 'quantity',
       inputName: 'quantity',
       required: true,
@@ -134,17 +155,19 @@ const config = {
       }
     },
     {
-      name: 'link',
-      inputName: 'link',
-      required: false,
+      name: 'unitCost',
+      inputName: 'unitCost',
+      required: true,
+      requiredError: function (headerName, rowNumber, columnNumber) {
+        return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
+      },
       validate: function (str) {
-        if (str) return isURL(str)
-        else return true
+        return isPositiveFloat(str)
       }
     },
     {
-      name: 'cost',
-      inputName: 'cost',
+      name: 'totalCost',
+      inputName: 'totalCost',
       required: true,
       requiredError: function (headerName, rowNumber, columnNumber) {
         return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
@@ -162,15 +185,28 @@ const config = {
       }
     },
     {
-      name: 'vendorCode',
-      inputName: 'vendorCode',
+      name: 'GTIN',
+      inputName: 'GTIN',
       unique: false,
       uniqueError: function (headerName) {
         return `${headerName} is not unique`
       },
       required: false,
       validate: function (str) {
-        if (str) return isAlphanumericString(str)
+        if (str) return isGTIN(str)
+        else return true
+      }
+    },
+    {
+      name: 'SKU',
+      inputName: 'SKU',
+      unique: false,
+      uniqueError: function (headerName) {
+        return `${headerName} is not unique`
+      },
+      required: false,
+      validate: function (str) {
+        if (str) return isSKU(str)
         else return true
       }
     },
@@ -184,15 +220,6 @@ const config = {
       }
     },
     {
-      name: 'moq',
-      inputName: 'moq',
-      required: false,
-      validate: function (str) {
-        if (str) return isPositiveInt(str)
-        else return true
-      }
-    },
-    {
       name: 'leadTime',
       inputName: 'leadTime',          //ISO 8601
       required: false,
@@ -202,20 +229,11 @@ const config = {
       }
     },
     {
-      name: 'material',
-      inputName: 'material',
+      name: 'link',
+      inputName: 'link',
       required: false,
       validate: function (str) {
-        if (str) return isAlphanumericString(str)
-        else return true
-      }
-    },
-    {
-      name: 'weight',
-      inputName: 'weight',          //in Kg
-      required: false,
-      validate: function (str) {
-        if (str) return isPositiveFloat(str)
+        if (str) return isURL(str)
         else return true
       }
     },
