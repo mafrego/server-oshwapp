@@ -80,7 +80,7 @@ app.use(function(err, req, res, next){
     return
   }
   if(err.code === "LIMIT_IMAGE_FILE_TYPE"){
-    res.status(422).json({error: "Only png images allowed"})
+    res.status(422).json({error: "image file type not allowed"})
     return
   }
   if(err.code === "LIMIT_FILE_SIZE"){
