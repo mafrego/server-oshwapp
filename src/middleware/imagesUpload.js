@@ -24,7 +24,7 @@ const multerStorage = multer.memoryStorage();
 
 const imageFilter = (req, file, cb) => {
 
-  const allowedImageTypes = ["image/png", "image/svg", "image/jpg", "image/jpeg"]
+  const allowedImageTypes = ["image/png", "image/svg", "image/svg+xml", "image/jpg", "image/jpeg"]
 
   if (!allowedImageTypes.includes(file.mimetype)) {
     console.log("file type not allowed")
