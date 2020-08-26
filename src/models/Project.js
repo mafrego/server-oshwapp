@@ -11,6 +11,12 @@ module.exports = {
     dateTime: 'datetime',
     // states: create, assembling, rooted, released, forked, versioned
     state: 'string',
+    link: {
+        type: "string",
+        uri: {
+            scheme: ['http', 'https']
+        }
+    },
     imageUrl: {
         type: "string",
         uri: {
