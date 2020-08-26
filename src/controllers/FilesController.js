@@ -83,21 +83,21 @@ module.exports = {
                  MATCH (project:Project { uuid: $projectId}) \
                  CREATE ( \
                         atom:Atom:Product { \
+                        uuid: apoc.create.uuid(),  \
                         itemNumber: toInteger(line.itemNumber), \
                         name: line.name, \
                         description: line.description, \
-                        uuid: apoc.create.uuid(),  \
+                        moq: toInteger(line.moq), \
                         quantity: toInteger(line.quantity), \
                         quantity_to_assemble: toInteger(line.quantity), \
-                        cost: toFloat(line.cost), \
+                        unitCost: toFloat(line.unitCost), \
+                        totalCost: toFloat(line.totalCost), \
                         currency: line.currency, \
-                        vendorCode: line.vendorCode, \
-                        link: line.link, \
+                        GTIN: toInteger(line.GTIN), \
+                        SKU: line.SKU, \
                         vendorUrl: line.vendorUrl, \
-                        moq: toInteger(line.moq), \
                         leadTime: duration(line.leadTime), \
-                        material: line.material, \
-                        weight: toFloat(line.weight), \
+                        link: line.link, \
                         notes: line.notes, \
                         imageUrl: $imagePath + line.name + ".png" \
                         }  \
