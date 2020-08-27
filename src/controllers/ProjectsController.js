@@ -314,7 +314,7 @@ module.exports = {
             console.log('req.body:', req.body)
            const projectId = req.body.uuid
         //    console.log('projectId:', projectId)
-           const fileName = req.body.name
+           const fileName = req.body.name+".csv"
            const query = `MATCH (atom)<-[:CONSISTS_OF]-(project:Project) 
            WHERE project.uuid = "${projectId}" \
            RETURN atom.itemNumber AS itemNumber, \
