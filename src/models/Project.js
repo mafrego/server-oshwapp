@@ -29,7 +29,7 @@ module.exports = {
         relationship: "HAS_ROOT",
         direction: "out",
         properties: {
-            version: 'string'
+            version: 'string'       //version property of relationship or of project itself?
         },
         eager: true // <-- eager load this relationship
     },
