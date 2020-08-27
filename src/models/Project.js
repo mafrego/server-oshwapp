@@ -8,9 +8,17 @@ module.exports = {
     name: 'string',
     description: 'string',
     license: 'string',
-    dateTime: 'datetime',
+    version: 'string',          // semantic version
+    region: 'string',           // ISO 3166
+    dateTime: 'datetime',       // creation
     // states: create, assembling, rooted, released, forked, versioned
     state: 'string',
+    bopUrl: {
+        type: "string",
+        uri: {
+            scheme: ['http', 'https']
+        }
+    },
     link: {
         type: "string",
         uri: {
