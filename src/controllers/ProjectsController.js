@@ -1,6 +1,7 @@
 const db = require('../db.js');
 const aws = require("aws-sdk");
 
+// TODO write a module to put all this S3 stuff, the same on bomUpload.js
 const BUCKET_NAME = process.env.BUCKET_NAME
 const AWSAccessKeyId = process.env.AWSAccessKeyId
 const AWSSecretKey = process.env.AWSSecretKey
@@ -309,37 +310,53 @@ module.exports = {
         }
     },
 
-    async downloadProjectBop(req, res){
+    async downloadProjectBop(req, res) {
         try {
-            console.log('req.body:', req.body)
-           const projectId = req.body.uuid
-        //    console.log('projectId:', projectId)
-           const fileName = req.body.name+".csv"
-           const query = `MATCH (atom)<-[:CONSISTS_OF]-(project:Project) 
-           WHERE project.uuid = "${projectId}" \
-           RETURN atom.itemNumber AS itemNumber, \
-           atom.name AS name, \
-           atom.description AS description, \
-           atom.moq AS moq, \
-           atom.quantity AS quantity, \
-           atom.unitCost AS unitCost, \
-           atom.totalCost AS totalCost, \
-           atom.currency AS currency, \
-           atom.SKU AS SKU, \
-           atom.vendorUrl AS vendorUrl, \
-           atom.leadTime AS leadTime, \
-           atom.link AS link, \
-           atom.notes AS notes \
-           ORDER BY atom.itemNumber`
-            // console.log(query)
-           await db.cypher(
-           'WITH $query AS query \
-            CALL apoc.export.csv.query(query, $fileName, {}) \
-            YIELD file, source, format, nodes, relationships, properties, data \
-            RETURN file, source, format, nodes, relationships, properties, data',
-           { fileName: fileName, query: query}
-           )
-            .then(() => res.status(200).send({ msg: `bop of project with uuid:${projectId} has been downloaded` }));
+            // console.log('req.body:', req.body)
+            const fileName = req.body.name + "_updated.csv"
+            const projectId = req.body.uuid
+            const query = `MATCH (atom)<-[:CONSISTS_OF]-(project:Project) 
+                WHERE project.uuid = "${projectId}" \
+                RETURN atom.itemNumber AS itemNumber, \
+                atom.name AS name, \
+                atom.description AS description, \
+                atom.moq AS moq, \
+                atom.quantity AS quantity, \
+                atom.unitCost AS unitCost, \
+                atom.totalCost AS totalCost, \
+                atom.currency AS currency, \
+                atom.SKU AS SKU, \
+                atom.vendorUrl AS vendorUrl, \
+                atom.leadTime AS leadTime, \
+                atom.link AS link, \
+                atom.notes AS notes \
+                ORDER BY atom.itemNumber`
+
+            const ret = await db.cypher(
+                'WITH $query AS query \
+                CALL apoc.export.csv.query(query, null, {stream: true}) \
+                YIELD  data \
+                RETURN data',
+                { query: query })
+
+            // TODO
+            // store the output straight to S3 when user decides to save his modified BOM 
+            // and then add a download btn with that S3 url
+
+            const pathName = `${projectId}/${fileName}`;
+            const stream = ret.records[0]._fields[0]
+            // console.log(stream)
+            const s3 = new aws.S3()
+            const retfromS3 = await s3.upload({
+                Bucket: BUCKET_NAME,
+                Key: pathName,
+                Body: stream,
+                ContentType: 'text/csv',
+                ACL: 'public-read'
+            }).promise()
+
+            // console.log(retfromS3)
+            res.status(200).send(retfromS3)
         } catch (error) {
             console.log(error);
             res.status(500).send({

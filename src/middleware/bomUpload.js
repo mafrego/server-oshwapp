@@ -3,6 +3,7 @@ const CSVFileValidator = require('csv-file-validator')
 const fs = require('fs');
 const aws = require("aws-sdk");
 
+// TODO put this stuff in separate module
 const BUCKET_NAME = process.env.BUCKET_NAME
 const AWSAccessKeyId = process.env.AWSAccessKeyId
 const AWSSecretKey = process.env.AWSSecretKey
