@@ -27,18 +27,10 @@ module.exports = (app) => {
     authJwt.isAdmin,
     AdminController.deleteUser)
 
-    // app.get('/atoms/:id', 
-    // AtomsController.show)
-
-    // app.post('/atoms', 
-    // authJwt.verifyToken,
-    // authJwt.isAssemblerOrAdmin,
-    // AtomsController.post)
-
-    // app.delete('/deleteproject/:id', 
+    app.post('/downloadprojectbop', 
     // authJwt.verifyToken,
     // authJwt.isAdmin,
-    // AdminController.deleteProject)
+    ProjectsController.downloadProjectBop)
 
     app.delete('/deleteproject/:id', 
     authJwt.verifyToken,

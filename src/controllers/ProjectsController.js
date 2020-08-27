@@ -150,12 +150,12 @@ module.exports = {
         }
     },
 
-    async updateProject(req, res){
+    async updateProject(req, res) {
         try {
             const description = req.body.description
             const projectId = req.params.id
             const project = await db.model('Project').find(projectId)
-            const response = await project.update({ description: description})
+            const response = await project.update({ description: description })
             const json = await response.toJson()
             console.log(json)
             res.status(200).send(json)
@@ -238,7 +238,7 @@ module.exports = {
 
                 const s3 = new aws.S3()
                 s3.deleteObjects(toDelete, function (err, data) {
-                    if (err) console.log('deleting atom images: ',err, err.stack)
+                    if (err) console.log('deleting atom images: ', err, err.stack)
                     else {
                         // console.log(data)
                         return data
@@ -260,7 +260,7 @@ module.exports = {
 
                 const s3 = new aws.S3()
                 s3.deleteObjects(toDelete, function (err, data) {
-                    if (err) console.log('deleting assembliy images: ',err, err.stack)
+                    if (err) console.log('deleting assembliy images: ', err, err.stack)
                     else {
                         // console.log(data)
                         return data
@@ -308,5 +308,44 @@ module.exports = {
             });
         }
     },
+
+    async downloadProjectBop(req, res){
+        try {
+            console.log('req.body:', req.body)
+           const projectId = req.body.uuid
+        //    console.log('projectId:', projectId)
+           const fileName = req.body.name
+           const query = `MATCH (atom)<-[:CONSISTS_OF]-(project:Project) 
+           WHERE project.uuid = "${projectId}" \
+           RETURN atom.itemNumber AS itemNumber, \
+           atom.name AS name, \
+           atom.description AS description, \
+           atom.moq AS moq, \
+           atom.quantity AS quantity, \
+           atom.unitCost AS unitCost, \
+           atom.totalCost AS totalCost, \
+           atom.currency AS currency, \
+           atom.SKU AS SKU, \
+           atom.vendorUrl AS vendorUrl, \
+           atom.leadTime AS leadTime, \
+           atom.link AS link, \
+           atom.notes AS notes \
+           ORDER BY atom.itemNumber`
+            // console.log(query)
+           await db.cypher(
+           'WITH $query AS query \
+            CALL apoc.export.csv.query(query, $fileName, {}) \
+            YIELD file, source, format, nodes, relationships, properties, data \
+            RETURN file, source, format, nodes, relationships, properties, data',
+           { fileName: fileName, query: query}
+           )
+            .then(() => res.status(200).send({ msg: `bop of project with uuid:${projectId} has been downloaded` }));
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: 'An error has occured trying to download the project BOP'
+            });
+        }
+    }
 
 }
