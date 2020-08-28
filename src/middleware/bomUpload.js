@@ -61,7 +61,7 @@ function isSKU(str) {
 
 // match everything except for comma and semicolon
 function isDescriptionString(str) {
-  const pattern = /[^,;]*$/;
+  const pattern = /^[^,;]+$/;
   return pattern.test(str)
 }
 
