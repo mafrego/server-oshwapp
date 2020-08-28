@@ -9,7 +9,8 @@ module.exports = {
     description: 'string',
     license: 'string',
     version: 'string',          // semantic version
-    region: 'string',           // ISO 3166
+    country: 'string',           // ISO 3166-1
+    region: 'string',           // ISO 3166-2
     dateTime: 'datetime',       // creation
     // states: create, assembling, rooted, released, forked, versioned
     state: 'string',
