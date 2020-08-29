@@ -76,11 +76,11 @@ module.exports = {
     async loadCSV(req, res) {
         try {
             const projectId = req.params.projectId
-            // TODO get bomPath and imagePath from middleware
-            const bomPath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/bom.csv`
+            const s3bomPath = req.s3bomPath
+            // const s3bomPath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/bom.csv`
             const imagePath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/images/`
-            await db.cypher(
-                'LOAD CSV WITH HEADERS FROM $bomPath AS line \
+            const ret = await db.cypher(
+                'LOAD CSV WITH HEADERS FROM $s3bomPath AS line \
                  MATCH (project:Project { uuid: $projectId}) \
                  CREATE ( \
                         atom:Atom:Product { \
@@ -104,8 +104,14 @@ module.exports = {
                         }  \
                     ) \
                 CREATE (project)-[:CONSISTS_OF]->(atom)',
-                { projectId: projectId, bomPath: bomPath, imagePath: imagePath })
-                .then(() => res.status(201).send({ msg: "BOM uploaded and sotored on db" }))
+                { projectId: projectId, s3bomPath: s3bomPath, imagePath: imagePath })
+                // .then(() => res.status(201).send({ msg: "BOM uploaded and sotored on db" }))
+                console.log('ret:', ret)
+
+                const project = await db.model('Project').find(projectId)
+                await project.update({ bopUrl: s3bomPath })
+
+                res.status(201).send({ msg: "BOM uploaded and sotored on db" })
         } catch (error) {
             console.log(error);
             res.status(400).send(error)

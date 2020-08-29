@@ -284,7 +284,8 @@ const uploadCsvFileToS3 = async (req, res, next) => {
       ACL: 'public-read'
     }).promise()
 
-    console.log('ret:', ret)
+    // console.log('ret:', ret)
+    req.s3bomPath = ret.Location
     // console.log("removing .csv file from server...")
     fs.unlinkSync(req.file.path)    //remove file
 
