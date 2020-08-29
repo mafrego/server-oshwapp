@@ -325,6 +325,7 @@ module.exports = {
                 atom.unitCost AS unitCost, \
                 atom.totalCost AS totalCost, \
                 atom.currency AS currency, \
+                atom.GTIN AS GTIN, \
                 atom.SKU AS SKU, \
                 atom.vendorUrl AS vendorUrl, \
                 atom.leadTime AS leadTime, \
