@@ -123,11 +123,12 @@ module.exports = {
 
     async updateProjectState(req, res) {
         try {
+            let ret = null
             const newstate = req.body.state
             const projectId = req.params.id
             const project = await db.model('Project').find(projectId)
             if (newstate === 'released') {
-                await db.mergeOn('Project',
+                ret = await db.mergeOn('Project',
                     { uuid: projectId },
                     {
                         state: newstate, has_root: [{
@@ -137,10 +138,12 @@ module.exports = {
                     }
                 )
             } else {
-                await project.update({ state: newstate })
+                ret = await project.update({ state: newstate })
             }
+            const json = await ret.toJson()
+            console.log('json:', json)
             res.status(200).send({
-                state: newstate,
+                project: json,
                 message: `project: ${projectId} updated to state: ${newstate}`
             })
         } catch (error) {
@@ -313,7 +316,7 @@ module.exports = {
     async downloadProjectBop(req, res) {
         try {
             // console.log('req.body:', req.body)
-            const fileName = req.body.name + "_updated.csv"
+            const fileName = "bom.csv"
             const projectId = req.body.uuid
             const query = `MATCH (atom)<-[:CONSISTS_OF]-(project:Project) 
                 WHERE project.uuid = "${projectId}" \
