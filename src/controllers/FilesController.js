@@ -76,6 +76,7 @@ module.exports = {
     async loadCSV(req, res) {
         try {
             const projectId = req.params.projectId
+            // TODO get bomPath and imagePath from middleware
             const bomPath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/bom.csv`
             const imagePath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/images/`
             await db.cypher(
