@@ -269,7 +269,7 @@ module.exports = {
                 })
             }
 
-            // TODO add logic to delete folder with bom.csv in S3 bucket
+            // logic to delete folder with bom.csv in S3 bucket
             const s3 = new aws.S3()
             const bom = req.params.id + "/bom.csv"
             const toDelete = {
