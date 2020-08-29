@@ -276,7 +276,7 @@ const uploadCsvFileToS3 = async (req, res, next) => {
     const pathName = `${folderName}/bom.csv`;
     let stream = fs.createReadStream(req.file.path);
 
-    await s3.upload({
+    const ret = await s3.upload({
       Bucket: BUCKET_NAME,
       Key: pathName,
       Body: stream,
@@ -284,6 +284,7 @@ const uploadCsvFileToS3 = async (req, res, next) => {
       ACL: 'public-read'
     }).promise()
 
+    console.log('ret:', ret)
     // console.log("removing .csv file from server...")
     fs.unlinkSync(req.file.path)    //remove file
 
