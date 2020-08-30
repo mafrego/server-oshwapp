@@ -139,12 +139,11 @@ module.exports = {
 
     async updateProject(req, res) {
         try {
-            const description = req.body.description
             const projectId = req.params.id
             const project = await db.model('Project').find(projectId)
-            const response = await project.update({ description: description })
+            const response = await project.update(req.body)
             const json = await response.toJson()
-            console.log(json)
+            // console.log(json)
             res.status(200).send(json)
         } catch (error) {
             console.log(error);
@@ -168,7 +167,6 @@ module.exports = {
         }
     },
 
-    // TODO remove images as well
     async deleteBom(req, res) {
         const projectId = req.params.id
         try {
