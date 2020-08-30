@@ -77,9 +77,10 @@ module.exports = {
         try {
             const projectId = req.params.projectId
             const s3bomPath = req.s3bomPath
-            // const s3bomPath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/bom.csv`
+            // TODO find an alternative to save the image URL properties:
+            // maybe use a cypehr query passing an array of image URLs after uploading images 
             const imagePath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/images/`
-            const ret = await db.cypher(
+            await db.cypher(
                 'LOAD CSV WITH HEADERS FROM $s3bomPath AS line \
                  MATCH (project:Project { uuid: $projectId}) \
                  CREATE ( \
@@ -106,15 +107,14 @@ module.exports = {
                 CREATE (project)-[:CONSISTS_OF]->(atom)',
                 { projectId: projectId, s3bomPath: s3bomPath, imagePath: imagePath })
                 // .then(() => res.status(201).send({ msg: "BOM uploaded and sotored on db" }))
-                console.log('ret:', ret)
 
                 const project = await db.model('Project').find(projectId)
                 await project.update({ bopUrl: s3bomPath })
 
-                res.status(201).send({ msg: "BOM uploaded and sotored on db" })
+                res.status(201).send({ msg: "BOM uploaded and stored on db" })
         } catch (error) {
             console.log(error);
-            res.status(400).send(error)
+            res.status(400).send({msg: "something went wrong while uploading the BOM"})
         }
     },
 
