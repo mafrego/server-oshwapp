@@ -1,23 +1,6 @@
 const db = require('../db.js');
-const aws = require("aws-sdk");
-
-// TODO write a module to put all this S3 stuff, the same on bomUpload.js
-const BUCKET_NAME = process.env.BUCKET_NAME
-const AWSAccessKeyId = process.env.AWSAccessKeyId
-const AWSSecretKey = process.env.AWSSecretKey
-
-if (process.env.NODE_ENV === 'production') {
-    aws.config = new aws.Config();
-    aws.config.accessKeyId = AWSAccessKeyId
-    aws.config.secretAccessKey = AWSSecretKey
-    aws.config.region = 'eu-central-1'
-} else {
-    aws.config.update({
-        accessKeyId: AWSAccessKeyId,
-        secretAccessKey: AWSSecretKey,
-        region: 'eu-central-1'
-    })
-}
+const { aws, BUCKET_NAME } = require('../aws.js')
+const cypher = require('../service/cypher.js')
 
 module.exports = {
 
@@ -104,7 +87,7 @@ module.exports = {
 
     async createProject(req, res) {
         try {
-            // TODO compose imageUrl from env. variable and user image or other
+            // TODO compose imageUrl from env. variable and user image or other and select a random img
             req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/service/project.svg"
             const ret = await db.model('Project').create(req.body)
             const project = await ret.toJson()
@@ -141,7 +124,7 @@ module.exports = {
                 ret = await project.update({ state: newstate })
             }
             const json = await ret.toJson()
-            console.log('json:', json)
+            // console.log('json:', json)
             res.status(200).send({
                 project: json,
                 message: `project: ${projectId} updated to state: ${newstate}`
@@ -185,16 +168,45 @@ module.exports = {
         }
     },
 
-    // using cypher quesry beacuse it is much faster
+    // TODO remove images as well
     async deleteBom(req, res) {
         const projectId = req.params.id
         try {
-            await db.cypher(
-                'MATCH (project:Project {uuid: $projectId}), \
-                (project)-[:CONSISTS_OF]->(atom:Atom) \
-                DETACH DELETE atom',
-                { projectId: projectId }
-            ).then(() => res.status(200).send({ msg: `bom of project:${projectId} has been deleted` }))
+            const project = await db.model('Project').find(projectId)
+            const projectJson = await project.toJson()
+            const atoms = projectJson.consists_of.map(el => el.node)
+
+            await cypher.deleteAllAtomsFromProject(projectId)
+
+            // DELETE all images in S3 bucket
+            if (atoms.length > 0) {         // Objects must not be empty otherwise s3 error
+                const imageNames = projectJson.consists_of.map(el => el.node.name)
+                const Objects = imageNames.map(name => ({ Key: req.params.id + "/images/" + name + ".png" }))
+                // console.log(Objects)
+                const toDelete = {
+                    Bucket: BUCKET_NAME,
+                    Delete: {
+                        Objects: Objects,
+                        Quiet: false
+                    }
+                }
+
+                const s3 = new aws.S3()
+                s3.deleteObjects(toDelete, function (err, data) {
+                    if (err) console.log('deleting atom images: ', err, err.stack)
+                    else {
+                        // console.log(data)
+                        return data
+                    }
+                })
+            }
+
+            const projectWithNoAtoms = await db.model('Project').find(projectId)
+            const updatedProject = await projectWithNoAtoms.update({ state: 'created' })
+            const json = await updatedProject.toJson()
+            console.log('json:', json)
+            res.status(200).send(json)
+
         } catch (error) {
             console.log(error);
             res.status(500).send({
