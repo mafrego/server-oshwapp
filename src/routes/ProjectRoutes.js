@@ -36,6 +36,11 @@ module.exports = function(app) {
     authJwt.isAssemblerOrAdmin,
     ProjectsController.updateProjectState)
 
+    app.put('/projectbom/',   
+    authJwt.verifyToken,
+    authJwt.isAssemblerOrAdmin,
+    ProjectsController.updateProjectBom)
+
     app.put('/project/:id',   
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,

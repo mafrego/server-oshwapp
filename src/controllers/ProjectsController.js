@@ -202,7 +202,7 @@ module.exports = {
             const projectWithNoAtoms = await db.model('Project').find(projectId)
             const updatedProject = await projectWithNoAtoms.update({ state: 'created' })
             const json = await updatedProject.toJson()
-            console.log('json:', json)
+            // console.log('json:', json)
             res.status(200).send(json)
 
         } catch (error) {
@@ -323,11 +323,11 @@ module.exports = {
         }
     },
 
-    async downloadProjectBop(req, res) {
+    async updateProjectBom(req, res) {
         try {
             // console.log('req.body:', req.body)
             const fileName = "bom.csv"
-            const projectId = req.body.uuid
+            const projectId = req.body.projectId
             const query = `MATCH (atom)<-[:CONSISTS_OF]-(project:Project) 
                 WHERE project.uuid = "${projectId}" \
                 RETURN atom.itemNumber AS itemNumber, \
@@ -353,13 +353,9 @@ module.exports = {
                 RETURN data',
                 { query: query })
 
-            // TODO
-            // store the output straight to S3 when user decides to save his modified BOM 
-            // and then add a download btn with that S3 url
-
             const pathName = `${projectId}/${fileName}`;
             const stream = ret.records[0]._fields[0]
-            // console.log(stream)
+            console.log(stream)
             const s3 = new aws.S3()
             const retfromS3 = await s3.upload({
                 Bucket: BUCKET_NAME,
