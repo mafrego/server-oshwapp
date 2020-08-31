@@ -139,6 +139,7 @@ module.exports = {
 
     async updateProject(req, res) {
         try {
+            // console.log('req.body:', req.body)
             const projectId = req.params.id
             const project = await db.model('Project').find(projectId)
             const response = await project.update(req.body)
