@@ -62,7 +62,11 @@ module.exports = {
     // return assemblables
     async assembleCopy(req, res) {
         const projectId = req.params.id
+        const name = req.body.name
         // console.log(req.body.quantities)
+        // TODO refactor: add imageUrl
+        req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/"+ projectId +"/images/"+ name +".png"
+        
         try {
             //1. create assembly
             const assembly = await db.mergeOn('Assembly',
