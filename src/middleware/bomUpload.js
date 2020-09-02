@@ -87,6 +87,10 @@ const config = {
       requiredError: function (headerName, rowNumber, columnNumber) {
         return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
       },
+      unique: true,
+      uniqueError: function (headerName) {
+        return `${headerName} is not unique`
+      },
       validate: function (str) {
         return isPositiveInt(str)
       }
