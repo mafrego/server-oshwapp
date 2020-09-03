@@ -37,9 +37,13 @@ module.exports = {
                 console.log(search)
                 const products = await json.map(project => project.has_root[0].node)
                 result = await products.filter(item => item.name === search)
+                // take first 10 products
+                // result = await products.slice(0, 10).filter(item => item.name === search)
                 // console.log(result)
             } else {
                 result = json.map(project => project.has_root[0].node)
+                // take first 10 projects
+                // result = json.slice(0, 10).map(project => project.has_root[0].node)
                 // console.log(result)
             }
             // console.log(result)
