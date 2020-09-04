@@ -65,30 +65,6 @@ module.exports = {
         }
     },
 
-    // NO NEED OF DISTINCTION!
-    // distinguish between Compounds and Atoms 
-    // async showbis(req, res) {
-    //     try {
-    //         let product = null
-    //         let atom = null
-    //         let isAnAssembly = await db.find('Assembly', req.params.id)
-    //         // console.log(isAnAssembly)
-    //         if (isAnAssembly) {
-    //             product = await db.find('Assembly', req.params.id).then(ret => { return ret.toJson() })
-    //             return res.status(200).send(product)
-    //         } else {
-    //             atom = await db.find('Atom', req.params.id).then(ret => { return ret.toJson() })
-    //             // console.log(atom)
-    //             return res.status(200).send(atom)
-    //         }
-    //     } catch (err) {
-    //         console.log(err);
-    //         res.status(500).send({
-    //             error: 'An error has occured trying to fetch the assemblies'
-    //         })
-    //     }
-    // },
-
     // TODO refactor if eager relationship use method get('relationship_name') to get all nodes
     // and substitute .then()
     async getchildren(req, res) {
@@ -135,29 +111,6 @@ module.exports = {
             })
         }
     },
-
-    // For now it has no sense create a product: only atoms and compounds
-    // post(req, res){
-    //     db.mergeOn('Product',
-    //     req.body,
-    //     {
-    //         assembled_from: req.body.parts.map((uuid, index) => ({
-    //             quantity: req.body.quantities[index],
-    //             node: uuid  // This can be an ID or an object. Might be something else depending on your mapping, the default is node...  
-    //         }))
-    //     })
-    //         .then(product => product.toJson())
-    //         .then(json => {
-    //             console.log(json);
-    //             res.send(json)
-    //         })
-    //         .catch(err => {
-    //             console.log(err);
-    //             res.status(500).send({
-    //                 error: 'An error has occurred trying to create the product'
-    //             })
-    //         });
-    // },
 
     async delete(req, res) {
         try {
