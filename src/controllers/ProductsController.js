@@ -2,49 +2,42 @@ const db = require('../db.js');
 
 module.exports = {
 
-    // async index(req, res) {
-    //     try {
-    //         let assemblies = null
-    //         const search = req.query.search
-    //         if (search) {
-    //             const ret = await db.all('Product', {
-    //                 name: search
-    //             })
-    //             assemblies = await ret.toJson()
-    //         } else {
-    //             const ret = await db.all('Product')
-    //             assemblies = await ret.toJson()
-    //         }
-    //         res.status(200).send(assemblies)
-    //     } catch (err) {
-    //         console.log(err);
-    //         res.status(500).send({
-    //             error: 'An error has occured trying to fetch the assemblies'
-    //         })
-    //     }
-    // },
 
-    // adapt for browsing only roots of rooted projects
     async index(req, res) {
         try {
             let result = []
             const search = req.query.search
-            // console.log(search)
             const projects = await db.all('Project', { state: 'released' })
             const json = await projects.toJson()
+            // console.log('projects: ', json)
 
             if (search) {
-                console.log(search)
-                const products = await json.map(project => project.has_root[0].node)
-                result = await products.filter(item => item.name === search)
-                // take first 10 products
-                // result = await products.slice(0, 10).filter(item => item.name === search)
-                // console.log(result)
+                json.forEach(element => { if( search === element.has_root[0].node.name){
+                    let data = {}
+                    data.name = element.has_root[0].node.name
+                    data.description = element.has_root[0].node.description
+                    data.imageUrl = element.has_root[0].node.imageUrl
+                    data.link = element.link
+                    data.bopUrl = element.bopUrl
+                    data.country = element.country
+                    data.version = element.version
+                    data.author = element.manages.node.username
+                    result.push(data)
+                }
+                });
             } else {
-                result = json.map(project => project.has_root[0].node)
-                // take first 10 projects
-                // result = json.slice(0, 10).map(project => project.has_root[0].node)
-                // console.log(result)
+                json.forEach(element => {
+                    let data = {}
+                    data.name = element.has_root[0].node.name
+                    data.description = element.has_root[0].node.description
+                    data.imageUrl = element.has_root[0].node.imageUrl
+                    data.link = element.link
+                    data.bopUrl = element.bopUrl
+                    data.country = element.country
+                    data.version = element.version
+                    data.author = element.manages.node.username
+                    result.push(data)
+                });
             }
             // console.log(result)
             res.status(200).send(result)
