@@ -62,4 +62,15 @@ module.exports = {
         },
         eager: true // <-- eager load this relationship
     },
+    manages: {
+        type: "relationship",
+        target: "User",
+        relationship: "MANAGES",
+        direction: "in",
+        properties: {
+            from: 'date',
+            state: 'string'
+        },
+        eager: true // <-- eager load this relationship
+    },
 }
