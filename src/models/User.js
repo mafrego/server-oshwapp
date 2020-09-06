@@ -51,4 +51,11 @@ module.exports = {
         },
         eager: true // <-- eager load this relationship
     },
+    answers: {
+        type: "relationship",
+        target: "Questionnaire",
+        relationship: "ANSWERS",
+        direction: "out",
+        eager: true // <-- eager load this relationship
+    },
 }
