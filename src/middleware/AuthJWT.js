@@ -34,30 +34,56 @@ module.exports = {
     },
 
     // TODO refactor using async/await
-    isAdmin(req, res, next) {
+    // isAdmin(req, res, next) {
 
-        // console.log('req.userID: ' + req.userId);
-        db.first('User', 'uuid', req.userId)
-            .then(response => response.toJson())
-            .then(json => {
-                const roles = [];
-                json.has_role.map(curr => roles.push(curr.node.name));
-                if (roles.includes('admin')) {
-                    next();
-                    return;
-                }
-                res.status(403).send({
-                    error: "Require admin role!"
-                });
+    //     // console.log('req.userID: ' + req.userId);
+    //     db.first('User', 'uuid', req.userId)
+    //         .then(response => response.toJson())
+    //         .then(json => {
+    //             const roles = [];
+    //             json.has_role.map(curr => roles.push(curr.node.name));
+    //             if (roles.includes('admin')) {
+    //                 next();
+    //                 return;
+    //             }
+    //             res.status(403).send({
+    //                 error: "Require admin role!"
+    //             });
+    //             return;
+    //         })
+    //         .catch(err => {
+    //             console.log(err);
+    //             res.status(400).send({
+    //                 error: 'There is something wrong with db'
+    //             })
+    //         }
+    //         )
+    // },
+
+    async isAdmin(req, res, next) {
+        let id = req.userId
+        try {
+            // console.log("isAssembler called")
+            const user = await db.first('User', 'uuid', req.userId)
+            const json = await user.toJson()
+            const roles = [];
+            json.has_role.map(curr => roles.push(curr.node.name));
+            if (roles.includes('admin')) {
+                // pass variable id to next function
+                req.userid = id;
+                next();
                 return;
-            })
-            .catch(err => {
-                console.log(err);
-                res.status(400).send({
-                    error: 'There is something wrong with db'
-                })
             }
-            )
+            res.status(403).send({
+                error: "Require admin role!"
+            });
+            return;
+        } catch (error) {
+            console.log(error);
+            res.status(400).send({
+                error: 'Something wrong with db in verifying admin permission'
+            })
+        }
     },
 
     // TODO refactor using async/await
