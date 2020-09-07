@@ -11,29 +11,36 @@ module.exports = function(app) {
     next();
   });
 
-  app.get(
-      "/api/test/all", 
-      controller.allAccess);
+  // app.get(
+  //     "/api/test/all", 
+  //     controller.allAccess);
 
-  // not used yet
-  app.get(
-    "/api/test/user",
-    authJwt.verifyToken,
-    controller.userBoard
-  );
+  // // not used yet
+  // app.get(
+  //   "/api/test/user",
+  //   authJwt.verifyToken,
+  //   controller.userBoard
+  // );
 
-  app.get(
-    "/api/test/assembler",
-    authJwt.verifyToken,
-    authJwt.isAssembler,
-    controller.assemblerBoard
-  );
+  // app.get(
+  //   "/api/test/assembler",
+  //   authJwt.verifyToken,
+  //   authJwt.isAssembler,
+  //   controller.assemblerBoard
+  // );
 
-  app.get(
-    "/api/test/admin",
+  // app.get(
+  //   "/api/test/admin",
+  //   authJwt.verifyToken,
+  //   authJwt.isAdmin,
+  //   controller.adminBoard
+  // );
+
+  app.put(
+    "/questionnaire",
     authJwt.verifyToken,
-    authJwt.isAdmin,
-    controller.adminBoard
+    authJwt.isAssemblerOrAdmin,
+    controller.updateQuestionnaire
   );
 
   app.put(

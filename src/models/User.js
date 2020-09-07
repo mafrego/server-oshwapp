@@ -51,10 +51,10 @@ module.exports = {
         },
         eager: true // <-- eager load this relationship
     },
-    answers: {
+    fills_in: {
         type: "relationship",
         target: "Questionnaire",
-        relationship: "ANSWERS",
+        relationship: "FILLS_IN",
         direction: "out",
         eager: true // <-- eager load this relationship
     },
