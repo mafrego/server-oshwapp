@@ -10,6 +10,14 @@ module.exports = {
         try {
             //hardcoded roles here
             const roles = ["assembler"]
+
+            // create questionnaire to link to user
+            const questionnaire = await db.create('Questionnaire', { 
+                name: req.body.username + '\'s questionnaire',
+                dateTime: new Date()
+            })
+            const questionnaireJson = await questionnaire.toJson()
+
             const user = await db.model('User')
                 .mergeOn(
                     {
@@ -20,7 +28,8 @@ module.exports = {
                     {
                         has_role: roles.map((name) => ({
                             node: name
-                        }))
+                        })),
+                        fills_in: { node: questionnaireJson.uuid}
                     }
                 )
             const json = await user.toJson()
@@ -28,6 +37,7 @@ module.exports = {
             // eager: true
             // jsonwebtoken.sign() needs json as first argument
             const uuid = {uuid : json.uuid}
+
             res.status(201).send({
                 user: json,
                 token: authJWT.jwtSignUser(uuid),
