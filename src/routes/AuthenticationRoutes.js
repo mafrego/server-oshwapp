@@ -12,7 +12,7 @@ module.exports = function (app) {
 
     app.post(
         "/register",
-        //maybe add auhtenticationcontrollerpolicy middleware
+        //TODO add checkDuplicateUsername middleware
         verifySignUp.checkDuplicateEmail,
         verifySignUp.validateData,
         verifySignUp.checkRolesExisted,
