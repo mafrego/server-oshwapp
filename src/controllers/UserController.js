@@ -20,7 +20,7 @@ module.exports = {
 
   async updateQuestionnaire(req, res) {
     try {
-      console.log('req.body:', req.body)
+      // console.log('req.body:', req.body)
       const questionnaire = await db.model('Questionnaire').find(req.body.uuid)
       const updated = await questionnaire.update(req.body)
       const json = await updated.toJson()
