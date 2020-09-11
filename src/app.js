@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 //ABYME necessary to use .env variables
 require('dotenv').config()
+const { handleError } = require('./helpers/error')
 
 const app = express()
 
@@ -88,4 +89,5 @@ app.use(function(err, req, res, next){
     res.status(422).json({error: "File size not allowed"})
     return
   }
+  handleError(err, res);
 })
