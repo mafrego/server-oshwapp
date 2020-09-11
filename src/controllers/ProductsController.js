@@ -22,6 +22,7 @@ module.exports = {
                     data.bopUrl = element.bopUrl
                     data.country = element.country
                     data.version = element.version
+                    data.license = element.license
                     data.author = element.manages.node.username
                     result.push(data)
                 }
@@ -37,6 +38,7 @@ module.exports = {
                     data.bopUrl = element.bopUrl
                     data.country = element.country
                     data.version = element.version
+                    data.license = element.license
                     data.author = element.manages.node.username
                     result.push(data)
                 });

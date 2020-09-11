@@ -7,7 +7,7 @@ module.exports = {
     },
     name: 'string',
     description: 'string',
-    // license: 'string',       //does it make sense?
+    license: 'string',       //does it make sense?
     version: 'string',          // semantic version
     country: 'string',           // ISO 3166-1
     region: 'string',           // ISO 3166-2
