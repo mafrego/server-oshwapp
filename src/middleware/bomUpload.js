@@ -2,6 +2,7 @@ const multer = require('multer');
 const CSVFileValidator = require('csv-file-validator')
 const fs = require('fs');
 const { aws, BUCKET_NAME } = require('../aws.js')
+const regex = require('../service/regex')
 
 const bomFilter = (req, file, cb) => {
 
@@ -29,54 +30,6 @@ const bomUpload = multer({
 // the name 'file' comes from formData.append("file", this.file); in Vue component
 const uploadBOM = bomUpload.single('file')
 
-//TODO find a way to put all the following function into a service module
-
-function isAlphanumericString(str) {
-  const pattern = /^[-0-9a-zA-Z_]+$/;     //plus hyphens and underscores
-  return pattern.test(str)
-}
-
-function isSKU(str) {
-  const pattern = /^[-0-9a-zA-Z_. /]+$/;     //plus hyphens, underscores, dots, blank spaces and slash 
-  return pattern.test(str)
-}
-
-// match everything except for comma and semicolon
-function isDescriptionString(str) {
-  const pattern = /^[^,;]+$/;
-  return pattern.test(str)
-}
-
-function isPositiveInt(str) {
-  const pattern = /^[0-9]*[1-9][0-9]*$/;
-  return pattern.test(str)
-}
-
-function isPositiveFloat(str) {
-  const pattern = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/;
-  return pattern.test(str)
-}
-
-function isISO4217(str) {
-  const pattern = /[A-Z]{3}/;
-  return pattern.test(str)
-}
-
-function isGTIN(str) {
-  const pattern = /^(\d{8}|\d{12}|\d{13}|\d{14})$/;
-  return pattern.test(str)
-}
-
-function isURL(str) {
-  const pattern = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
-  return pattern.test(str)
-}
-
-function isDurationISO8601(str) {
-  const pattern = /^P(?!$)(\d+(?:\.\d+)?Y)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?W)?(\d+(?:\.\d+)?D)?(T(?=\d)(\d+(?:\.\d+)?H)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?S)?)?$/
-  return pattern.test(str)
-}
-
 // shuffle header places not allowed on .csv file
 const config = {
   headers: [
@@ -92,7 +45,7 @@ const config = {
         return `${headerName} is not unique`
       },
       validate: function (str) {
-        return isPositiveInt(str)
+        return regex.isPositiveInt(str)
       }
     },
     {
@@ -107,7 +60,7 @@ const config = {
         return `${headerName} is not unique`
       },
       validate: function (str) {
-        return isAlphanumericString(str)
+        return regex.isAlphanumericString(str)
       }
     },
     {
@@ -118,7 +71,7 @@ const config = {
         return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
       },
       validate: function (str) {
-        return isDescriptionString(str)
+        return regex.isDescriptionString(str)
       }
     },
     {
@@ -126,7 +79,7 @@ const config = {
       inputName: 'moq',
       required: true,
       validate: function (str) {
-        if (str) return isPositiveInt(str)
+        if (str) return regex.isPositiveInt(str)
         else return true
       }
     },
@@ -138,7 +91,7 @@ const config = {
         return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
       },
       validate: function (str) {
-        return isPositiveInt(str)
+        return regex.isPositiveInt(str)
       }
     },
     {
@@ -149,7 +102,7 @@ const config = {
         return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
       },
       validate: function (str) {
-        return isPositiveFloat(str)
+        return regex.isPositiveFloat(str)
       }
     },
     {
@@ -160,7 +113,7 @@ const config = {
         return `${headerName} is required in row ${rowNumber}-column ${columnNumber}`
       },
       validate: function (str) {
-        return isPositiveFloat(str)
+        return regex.isPositiveFloat(str)
       }
     },
     {
@@ -168,7 +121,7 @@ const config = {
       inputName: 'currency',      //ISO 4217
       required: true,
       validate: function (str) {
-        return isISO4217(str)
+        return regex.isISO4217(str)
       }
     },
     {
@@ -180,7 +133,7 @@ const config = {
       },
       required: false,
       validate: function (str) {
-        if (str) return isGTIN(str)
+        if (str) return regex.isGTIN(str)
         else return true
       }
     },
@@ -193,7 +146,7 @@ const config = {
       },
       required: false,
       validate: function (str) {
-        if (str) return isSKU(str)
+        if (str) return regex.isSKU(str)
         else return true
       }
     },
@@ -202,7 +155,7 @@ const config = {
       inputName: 'vendorUrl',
       required: false,
       validate: function (str) {
-        if (str) return isURL(str)
+        if (str) return regex.isHTTP(str)
         else return true
       }
     },
@@ -211,7 +164,7 @@ const config = {
       inputName: 'leadTime',          //ISO 8601
       required: false,
       validate: function (str) {
-        if (str) return isDurationISO8601(str)
+        if (str) return regex.isDurationISO8601(str)
         else return true
       }
     },
@@ -220,7 +173,7 @@ const config = {
       inputName: 'link',
       required: false,
       validate: function (str) {
-        if (str) return isURL(str)
+        if (str) return regex.isHTTP(str)
         else return true
       }
     },
@@ -229,7 +182,7 @@ const config = {
       inputName: 'notes',
       required: false,
       validate: function (str) {
-        if (str) return isDescriptionString(str)
+        if (str) return regex.isDescriptionString(str)
         else return true
       }
     },
