@@ -1,5 +1,5 @@
 const authJwt  = require("../middleware/AuthJWT");
-// const validate  = require("../middleware/formValidate");
+const validate  = require("../middleware/formValidate");
 const ProjectsController = require('../controllers/ProjectsController')
 
 module.exports = function(app) {
@@ -28,7 +28,7 @@ module.exports = function(app) {
     ProjectsController.getAssemblables)
 
     app.post('/projects',
-    // validate.projectFormValidate,          // it works, just it stays commented for the moment 
+    validate.projectFormValidate,          // it works, just it stays commented for the moment 
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     ProjectsController.createProject)
