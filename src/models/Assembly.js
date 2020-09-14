@@ -9,7 +9,13 @@ module.exports = {
     description: 'string',
     quantity: 'int',
     quantity_to_assemble: 'int',
-    // add link and vendorUrl????
+    instruction: 'string',
+    link: {
+        type: "string",
+        uri: {
+            scheme: ['http', 'https']
+        }
+    },
     imageUrl: {
         type: "string",
         uri: {

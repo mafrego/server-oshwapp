@@ -17,6 +17,7 @@ module.exports = {
     currency: 'string',     // ISO 4217
     GTIN:'int',
     SKU: 'string',
+    instruction: 'string',
     vendorUrl: {
         type: "string",
         uri: {
