@@ -10,6 +10,7 @@ module.exports = {
     quantity: 'int',
     quantity_to_assemble: 'int',
     instruction: 'string',
+    totalCost: 'float',         //sum of cost of its parts, shippingCosts included
     link: {
         type: "string",
         uri: {
