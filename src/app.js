@@ -24,17 +24,19 @@ if (process.env.NODE_ENV === 'production') {
   whitelist = ['https://client-oshwapp.herokuapp.com', 'https://client-oshwapp.herokuapp.com:80']
 } else {
   // client url for local development
-  whitelist = ['http://localhost:8080',
-   'http://192.168.178.27:8080', 
-   'http://192.168.1.109:8080',
-   'http://192.168.1.110:8080']
+  whitelist = [
+    'http://localhost:8080',
+    'http://192.168.178.21:8080',
+     'http://192.168.1.109:8080',
+     'http://192.168.1.110:8080'
+  ]
 }
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
-        callback(null, true)
-      } else {
-        callback(new Error('Not allowed by CORS'))
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
     }
   }
 }
@@ -75,18 +77,18 @@ app.listen(PORT, () => {
 
 //ABYME
 // function to manage errors go to the end otherwise doesn't work!!!
-app.use(function(err, req, res, next){
-  if(err.code === "LIMIT_BOM_FILE_TYPE"){
-    res.status(422).json({error: "Only csv files allowed"})
+app.use(function (err, req, res, next) {
+  if (err.code === "LIMIT_BOM_FILE_TYPE") {
+    res.status(422).json({ error: "Only csv files allowed" })
     return
   }
-  if(err.code === "LIMIT_IMAGE_FILE_TYPE"){
-    res.status(422).json({error: "image file type not allowed"})
+  if (err.code === "LIMIT_IMAGE_FILE_TYPE") {
+    res.status(422).json({ error: "image file type not allowed" })
     return
   }
-  if(err.code === "LIMIT_FILE_SIZE"){
+  if (err.code === "LIMIT_FILE_SIZE") {
     console.log('File size not allowed')
-    res.status(422).json({error: "File size not allowed"})
+    res.status(422).json({ error: "File size not allowed" })
     return
   }
   handleError(err, res);
