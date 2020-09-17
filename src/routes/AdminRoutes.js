@@ -17,6 +17,11 @@ module.exports = (app) => {
     authJwt.isAdmin,
     AdminController.getAllUsers)
 
+    app.get('/user/:id',
+    authJwt.verifyToken,
+    authJwt.isAdmin,
+    AdminController.getUser)
+
     app.get('/allprojects',
     authJwt.verifyToken,
     authJwt.isAdmin,

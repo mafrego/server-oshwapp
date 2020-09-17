@@ -23,6 +23,31 @@ module.exports = {
         }
     },
 
+    async getUser(req, res) {
+        try {
+            const userId = req.params.id
+            const user = await db.model('User').find(userId)
+            const json = await user.toJson()
+            console.log(json)
+            const ret = {
+                uuid: json.uuid,
+                username: json.username,
+                email: json.email,
+                description: json.description,
+                like: json.fills_in.node.answer0,
+                dislike: json.fills_in.node.answer1,
+                improvement: json.fills_in.node.answer2,
+                comment: json.fills_in.node.answer3,
+            }
+            res.status(200).send(ret)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: `An error has occured trying to fetch user with uuid ${req.params.id}`
+            })
+        }
+    },
+
     async getAllProjects(req, res) {
         try {
             const projects = await db.all('Project')
