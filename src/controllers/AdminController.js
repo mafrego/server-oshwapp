@@ -26,10 +26,17 @@ module.exports = {
     async getUser(req, res) {
         try {
             const userId = req.params.id
-            const user = await db.model('User').find(userId)
-            const json = await user.toJson()
-            console.log(json)
-            const ret = {
+            const ret = await db.model('User').find(userId)
+            const json = await ret.toJson()
+            // console.log(json)
+            const projects = json.manages.map(item => { 
+                const project = { 
+                    name: item.node.name,
+                    uuid: item.node.uuid
+                }; 
+                return project 
+            })
+            const user = {
                 uuid: json.uuid,
                 username: json.username,
                 email: json.email,
@@ -39,7 +46,11 @@ module.exports = {
                 improvement: json.fills_in.node.answer2,
                 comment: json.fills_in.node.answer3,
             }
-            res.status(200).send(ret)
+            const data = {
+                user: user,
+                projects: projects
+            }
+            res.status(200).send(data)
         } catch (error) {
             console.log(error);
             res.status(500).send({
@@ -76,7 +87,7 @@ module.exports = {
 
             // delete questionnaire
             // check first relationship "fills_in" is present otherwise gives errors and stops
-            if(userJson.fills_in){
+            if (userJson.fills_in) {
                 const questionnaire = await db.model('Questionnaire').find(userJson.fills_in.node.uuid)
                 await questionnaire.delete()
             }
