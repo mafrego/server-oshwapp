@@ -25,7 +25,7 @@
   "homepage": "https://github.com/leoruba/nevn0#readme",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "aws-sdk": "^2.745.0",
+    "aws-sdk": "^2.755.0",
     "bcrypt": "^5.0.0",
     "bcrypt-nodejs": "0.0.3",
     "cors": "^2.8.5",
