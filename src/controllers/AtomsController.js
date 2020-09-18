@@ -12,7 +12,8 @@ module.exports = {
                 })
                 atoms = await ret.toJson()
             } else {
-                const ret = await db.all('Atom')
+                // all(model,params,order,limit,skip)
+                const ret = await db.all('Atom', {},{},20,0)
                 atoms = await ret.toJson()
             }
             res.status(200).send(atoms)
