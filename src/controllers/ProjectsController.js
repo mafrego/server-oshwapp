@@ -327,7 +327,10 @@ module.exports = {
     async updateProjectBom(req, res) {
         try {
             // console.log('req.body:', req.body)
-            const fileName = "bom.csv"
+            // console.log('updateProjectBomCalled')
+            const projectName = req.body.projectName
+            const fileName = projectName + "-bom.csv"
+            // console.log('fileName:', fileName)
             const projectId = req.body.projectId
             const query = `MATCH (atom)<-[:CONSISTS_OF]-(project:Project) 
                 WHERE project.uuid = "${projectId}" \
