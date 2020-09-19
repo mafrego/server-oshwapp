@@ -211,9 +211,11 @@ const csvValidate = async (req, res, next) => {
 const uploadCsvFileToS3 = async (req, res, next) => {
   try {
     const folderName = req.params.projectId
+    const fileName = req.file.originalname
     const s3 = new aws.S3()
-    const pathName = `${folderName}/bom.csv`;
+    const pathName = `${folderName}/${fileName}`;
     let stream = fs.createReadStream(req.file.path);
+    // console.log('req.file:', req.file)
 
     const ret = await s3.upload({
       Bucket: BUCKET_NAME,
