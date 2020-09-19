@@ -349,14 +349,14 @@ module.exports = {
 
             const ret = await db.cypher(
                 'WITH $query AS query \
-                CALL apoc.export.csv.query(query, null, {stream: true}) \
+                CALL apoc.export.csv.query(query, null, {quotes: false, stream: true}) \
                 YIELD  data \
                 RETURN data',
                 { query: query })
 
             const pathName = `${projectId}/${fileName}`;
             const stream = ret.records[0]._fields[0]
-            console.log(stream)
+            // console.log(stream)
             const s3 = new aws.S3()
             const retfromS3 = await s3.upload({
                 Bucket: BUCKET_NAME,
