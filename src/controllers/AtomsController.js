@@ -58,6 +58,7 @@ module.exports = {
             // console.log(req.body)
             let atom = req.body
             // TODO add s3 image file path to atom
+            // TODO add itemNumber and quantity_to_assemble at client side
             atom.quantity_to_assemble = atom.quantity    
             // console.log(req.params.projectID)
             const projectID = req.params.projectID
