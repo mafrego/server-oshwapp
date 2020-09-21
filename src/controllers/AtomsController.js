@@ -55,11 +55,11 @@ module.exports = {
 
     async addAtomToBom(req, res) {
         try {
-            console.log(req.params.projectID)
+            // console.log(req.params.projectID)
             const projectID = req.params.projectID
             let atom = req.body
             atom.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/"+projectID+"/images/"+atom.name+".png"
-            console.log(atom)
+            // console.log(atom)
             const response = await Promise.all([
                 db.find('Project', projectID),
                 db.create('Atom', atom)
