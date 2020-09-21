@@ -13,7 +13,7 @@ module.exports = {
                 atoms = await ret.toJson()
             } else {
                 // all(model,params,order,limit,skip)
-                const ret = await db.all('Atom', {},{},20,0)
+                const ret = await db.all('Atom', {}, {}, 20, 0)
                 atoms = await ret.toJson()
             }
             res.status(200).send(atoms)
@@ -41,7 +41,7 @@ module.exports = {
     async post(req, res) {
         try {
             // console.log(req.body)
-            req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/test/"+req.body.name+".png"
+            req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/test/" + req.body.name + ".png"
             const atom = await db.model('Atom').create(req.body)
             const json = await atom.toJson()
             res.status(201).send(json)
@@ -55,24 +55,33 @@ module.exports = {
 
     async addAtomToBom(req, res) {
         try {
-            // console.log(req.params.projectID)
             const projectID = req.params.projectID
             let atom = req.body
-            atom.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/"+projectID+"/images/"+atom.name+".png"
-            // console.log(atom)
-            const response = await Promise.all([
-                db.find('Project', projectID),
-                db.create('Atom', atom)
-            ])
-            // console.log(response)
-            await response[0].relateTo( response[1], 'consists_of')
-            const json = await response[1].toJson()
-            // console.log(json)
-            res.status(201).send(json)
+
+            // check if atom with same name is already present
+            const project = await db.find('Project', projectID)
+            const projectJson = await project.toJson()
+            let isAtomPresent = false
+            for (let element of projectJson.consists_of) {
+                if (element.node.name === atom.name) {
+                    isAtomPresent = true
+                    break
+                }
+            }
+
+            if (isAtomPresent) {
+                res.status(409).send({ message: 'atom with same name already present' })
+            } else {
+                atom.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/" + projectID + "/images/" + atom.name + ".png"
+                const response1 = await db.create('Atom', atom)
+                await project.relateTo(response1, 'consists_of')
+                const json = await response1.toJson()
+                res.status(201).send(json)
+            }
         } catch (error) {
             console.log(error);
             res.status(500).send({
-                error: 'An error has occurred trying to add the atom to the BOM'
+                message: 'An error has occurred trying to add the atom to the BOM'
             })
         }
     },
