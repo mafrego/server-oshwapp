@@ -168,6 +168,7 @@ module.exports = {
         }
     },
 
+    // delete atoms in neo4j and corresponding images on S3 but not projectName-bom.csv file 
     async deleteBom(req, res) {
         const projectId = req.params.id
         try {
@@ -221,6 +222,7 @@ module.exports = {
 
             const project = await db.model('Project').find(projectId)
             const projectJson = await project.toJson()
+            const projectName = projectJson.name
             const atoms = projectJson.consists_of.map(el => el.node)
             const assemblies = projectJson.refers_to.map(el => el.node)
 
@@ -285,7 +287,7 @@ module.exports = {
 
             // logic to delete folder with bom.csv in S3 bucket
             const s3 = new aws.S3()
-            const bom = req.params.id + "/bom.csv"
+            const bom = projectId+ "/"+projectName+"-bom.csv"
             const toDelete = {
                 Bucket: BUCKET_NAME,
                 Key: bom
@@ -299,7 +301,7 @@ module.exports = {
             })
 
             // delete empty folder
-            const emptyFolder = req.params.id + '/'
+            const emptyFolder = projectId + '/'
             const folderToDelete = {
                 Bucket: BUCKET_NAME,
                 Key: emptyFolder
