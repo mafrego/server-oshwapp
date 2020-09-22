@@ -41,7 +41,7 @@ module.exports = {
     async post(req, res) {
         try {
             // console.log(req.body)
-            req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/test/" + req.body.name + ".png"
+            req.body.imageUrl = process.env.AWS_S3_BASE_URL+"test/" + req.body.name + ".png"
             const atom = await db.model('Atom').create(req.body)
             const json = await atom.toJson()
             res.status(201).send(json)
@@ -72,7 +72,7 @@ module.exports = {
             if (isAtomPresent) {
                 res.status(409).send({ message: 'atom with same name already present' })
             } else {
-                atom.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/" + projectID + "/images/" + atom.name + ".png"
+                atom.imageUrl = process.env.AWS_S3_BASE_URL + projectID + "/images/" + atom.name + ".png"
                 const response1 = await db.create('Atom', atom)
                 await project.relateTo(response1, 'consists_of')
                 const json = await response1.toJson()

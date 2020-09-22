@@ -40,7 +40,7 @@ module.exports = {
     async post(req, res) {
         try {
             // TODO set imageUrl properly
-            req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/service/assembly.png"
+            req.body.imageUrl = process.env.AWS_S3_BASE_URL+"service/assembly.png"
             const ret = await db.mergeOn('Assembly',
                 req.body,
                 {
@@ -65,7 +65,7 @@ module.exports = {
         const name = req.body.name
         // console.log(req.body.quantities)
         // TODO refactor: add imageUrl
-        req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/"+ projectId +"/images/"+ name +".png"
+        req.body.imageUrl = process.env.AWS_S3_BASE_URL+ projectId +"/images/"+ name +".png"
         
         try {
             //1. create assembly

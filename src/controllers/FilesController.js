@@ -79,7 +79,7 @@ module.exports = {
             const s3bomPath = req.s3bomPath
             // TODO find an alternative to save the image URL properties:
             // maybe use a cypehr query passing an array of image URLs after uploading images 
-            const imagePath = `https://oshwapp.s3.eu-central-1.amazonaws.com/${projectId}/images/`
+            const imagePath = process.env.AWS_S3_BASE_URL+`${projectId}/images/`
             await db.cypher(
                 'LOAD CSV WITH HEADERS FROM $s3bomPath AS line \
                  MATCH (project:Project { uuid: $projectId}) \

@@ -87,8 +87,8 @@ module.exports = {
 
     async createProject(req, res) {
         try {
-            // TODO compose imageUrl from env. variable and user image or other and select a random img
-            req.body.imageUrl = "https://oshwapp.s3.eu-central-1.amazonaws.com/service/project.svg"
+            // TODO compose imageUrl from user image or other and select a random img
+            req.body.imageUrl = process.env.AWS_S3_BASE_URL+"service/project.svg"
             const ret = await db.model('Project').create(req.body)
             const project = await ret.toJson()
             await db.mergeOn('User',
