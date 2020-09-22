@@ -25,13 +25,13 @@ const projectFormValidate = async (req, res, next) => {
       throw new ErrorHandler(400, 'country not valid!')
     }
     const { region } = req.body
-    if (region) {
+    if (region) {                                           // region is not required
       if (!regex.isISO31662(region)) {
         throw new ErrorHandler(400, 'region not valid!')
       }
     }
     const { link } = req.body
-    if (link) {
+    if (link) {                                            // link is not required
       if (!regex.isHTTP(link)) {
         throw new ErrorHandler(400, 'link not valid!')
       }
