@@ -1,4 +1,5 @@
 const AtomsController = require('../controllers/AtomsController')
+const validate  = require("../middleware/formValidate");
 const authJwt  = require("../middleware/AuthJWT");
 
 module.exports = (app) => {
@@ -23,6 +24,7 @@ module.exports = (app) => {
     AtomsController.post)
 
     app.post('/atom/:projectID', 
+    validate.atomFormValidate,
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     AtomsController.addAtomToBom)
