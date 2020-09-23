@@ -28,7 +28,7 @@ module.exports = function(app) {
     ProjectsController.getAssemblables)
 
     app.post('/projects',
-    validate.projectFormValidate,          // it works, just it stays commented for the moment 
+    validate.projectFormValidate,
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     ProjectsController.createProject)
@@ -44,6 +44,7 @@ module.exports = function(app) {
     ProjectsController.updateProjectBom)
 
     app.put('/project/:id',   
+    validate.projectFormValidate,
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     ProjectsController.updateProject)
