@@ -88,7 +88,7 @@ module.exports = {
     async createProject(req, res) {
         try {
             // TODO compose imageUrl from user image or other and select a random img
-            req.body.imageUrl = process.env.AWS_S3_BASE_URL+"service/project.svg"
+            req.body.imageUrl = process.env.AWS_S3_BASE_URL + "service/project.svg"
             const ret = await db.model('Project').create(req.body)
             const project = await ret.toJson()
             await db.mergeOn('User',
@@ -137,15 +137,23 @@ module.exports = {
         }
     },
 
+    // wait for Adam's response
     async updateProject(req, res) {
         try {
             // console.log('req.body:', req.body)
             const projectId = req.params.id
             const project = await db.model('Project').find(projectId)
             const response = await project.update(req.body)
-            const json = await response.toJson()
-            // console.log(json)
-            res.status(200).send(json)
+            // update is supposed to give back the udated property but it is not if property is set to null
+            if (response) {
+                const projectBis = await db.model('Project').find(projectId)
+                const json = await projectBis.toJson()
+                // console.log(json)
+                res.status(200).send(json)
+            }
+                // const json = await response.toJson()
+                // console.log(json)
+                // res.status(200).send(json)
         } catch (error) {
             console.log(error);
             res.status(500).send({
@@ -287,7 +295,7 @@ module.exports = {
 
             // logic to delete folder with bom.csv in S3 bucket
             const s3 = new aws.S3()
-            const bom = projectId+ "/"+projectName+"-bom.csv"
+            const bom = projectId + "/" + projectName + "-bom.csv"
             const toDelete = {
                 Bucket: BUCKET_NAME,
                 Key: bom
