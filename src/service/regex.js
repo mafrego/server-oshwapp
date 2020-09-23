@@ -26,7 +26,7 @@ module.exports = {
     },
 
     isPositiveInt(str) {
-        const pattern = /^[0-9]*[1-9][0-9]*$/;
+        const pattern = /^[1-9]+[0-9]*$/;
         return pattern.test(str)
     },
 
@@ -86,5 +86,10 @@ module.exports = {
         return ret
     },
 
+    // TODO find a library or something to test value against ISO 4217
+    isCurrency(value) {
+        const pattern = /[A-Z]{3}/;
+        return pattern.test(value)
+    },
 
 }
