@@ -30,6 +30,11 @@ module.exports = {
         return pattern.test(str)
     },
 
+    isZeroPositiveInt(str) {
+        const pattern = /^[0-9]*$/;
+        return pattern.test(str)
+    },
+
     isPositiveFloat(str) {
         const pattern = /^(?:[1-9]\d*|0)?(?:\.\d+)?$/;
         return pattern.test(str)

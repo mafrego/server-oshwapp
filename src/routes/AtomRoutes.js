@@ -30,6 +30,7 @@ module.exports = (app) => {
     AtomsController.addAtomToBom)
 
     app.put('/atom', 
+    validate.atomUpdateFormValidate,
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     AtomsController.update)
