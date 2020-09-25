@@ -100,7 +100,7 @@ const atomFormValidate = (req, res, next) => {
     }
     const { notes } = req.body
     if (notes) {                                            // notes are not required
-      if (!regex.isAlphanumericString(notes)) {
+      if (!regex.isDescriptionString(notes)) {
         throw new ErrorHandler(400, 'notes not valid!')
       }
     }
@@ -124,9 +124,13 @@ const atomUpdateFormValidate = (req, res, next) => {
     if (!regex.isPositiveInt(moq)) {
       throw new ErrorHandler(400, 'moq not valid!')
     }
+    const { quantity } = req.body
+    if (!regex.isPositiveInt(quantity)) {
+      throw new ErrorHandler(400, 'quantity not valid!')
+    }
     const { quantity_to_assemble } = req.body
-    if (!regex.isZeroPositiveInt(quantity_to_assemble)) {
-      throw new ErrorHandler(400, 'quantity_to_assemble not valid!')
+    if (!regex.isNotEmptyZeroPositiveInt(quantity_to_assemble)) {
+      throw new ErrorHandler(400, 'quantity_to_assemble empty or not valid!')
     }
     const { unitCost } = req.body
     if (!regex.isPositiveFloat(unitCost)) {
@@ -168,7 +172,7 @@ const atomUpdateFormValidate = (req, res, next) => {
     }
     const { notes } = req.body
     if (notes) {                                            // notes are not required
-      if (!regex.isAlphanumericString(notes)) {
+      if (!regex.isDescriptionString(notes)) {
         throw new ErrorHandler(400, 'notes not valid!')
       }
     }
