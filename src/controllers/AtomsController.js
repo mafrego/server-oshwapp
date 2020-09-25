@@ -41,7 +41,7 @@ module.exports = {
     async post(req, res) {
         try {
             // console.log(req.body)
-            req.body.imageUrl = process.env.AWS_S3_BASE_URL+"test/" + req.body.name + ".png"
+            req.body.imageUrl = process.env.AWS_S3_BASE_URL + "test/" + req.body.name + ".png"
             const atom = await db.model('Atom').create(req.body)
             const json = await atom.toJson()
             res.status(201).send(json)
@@ -89,12 +89,20 @@ module.exports = {
     // check if after updating pre-existing relationships are kept
     async update(req, res) {
         try {
-            // console.log(req.body)
+            console.log('atom: ', req.body)
             const atom = await db.model('Atom').find(req.body.uuid)
             const atomUpdated = await atom.update(req.body)
-            const json = await atomUpdated.toJson()
+            if (atomUpdated) {
+                const atomBis = await db.model('Atom').find(req.body.uuid)
+                const json = await atomBis.toJson()
+                console.log('atomBis:', json)
+                // 200 for modified existing resource with PUT
+                res.status(200).send(json)
+            }
+            // const json = await atomUpdated.toJson()
+            // console.log('atom updated:', json)
             // 200 for modified existing resource with PUT
-            res.status(200).send(json)
+            // res.status(200).send(json)
         } catch (error) {
             console.log(error);
             res.status(500).send({
