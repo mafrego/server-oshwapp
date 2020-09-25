@@ -15,7 +15,7 @@ module.exports = {
     unitCost: 'float',
     totalCost: 'float',
     currency: 'string',     // ISO 4217
-    GTIN:'int',
+    GTIN:'string',
     SKU: 'string',
     vendorUrl: {
         type: "string",
