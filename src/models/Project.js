@@ -14,6 +14,7 @@ module.exports = {
     dateTime: 'datetime',       // creation
     // states: create, assembling, rooted, released, forked, versioned
     state: 'string',
+    currency: 'string',
     bopUrl: {
         type: "string",
         uri: {

@@ -16,6 +16,10 @@ const projectFormValidate = async (req, res, next) => {
     if (!regex.isSemanticVersion(version)) {
       throw new ErrorHandler(400, 'version not valid!')
     }
+    const { currency } = req.body
+    if (!regex.isCurrency(currency)) {
+      throw new ErrorHandler(400, 'currency not valid!')
+    }
     const { license } = req.body
     if (!regex.isAlphanumericString(license)) {
       throw new ErrorHandler(400, 'license not valid!')
@@ -64,10 +68,10 @@ const atomFormValidate = (req, res, next) => {
     if (!regex.isPositiveFloat(unitCost)) {
       throw new ErrorHandler(400, 'unit cost not valid!')
     }
-    const { currency } = req.body
-    if (!regex.isCurrency(currency)) {
-      throw new ErrorHandler(400, 'currency not valid!')
-    }
+    // const { currency } = req.body
+    // if (!regex.isCurrency(currency)) {
+    //   throw new ErrorHandler(400, 'currency not valid!')
+    // }
     const { GTIN } = req.body
     if (GTIN) {
       if (!regex.isGTIN(GTIN)) {
@@ -76,7 +80,7 @@ const atomFormValidate = (req, res, next) => {
     }
     const { SKU } = req.body
     if (SKU) {
-      if (!regex.isAlphanumericString(SKU)) {
+      if (!regex.isSKU(SKU)) {
         throw new ErrorHandler(400, 'SKU not valid!')
       }
     }
@@ -136,10 +140,10 @@ const atomUpdateFormValidate = (req, res, next) => {
     if (!regex.isPositiveFloat(unitCost)) {
       throw new ErrorHandler(400, 'unit cost not valid!')
     }
-    const { currency } = req.body
-    if (!regex.isCurrency(currency)) {
-      throw new ErrorHandler(400, 'currency not valid!')
-    }
+    // const { currency } = req.body
+    // if (!regex.isCurrency(currency)) {
+    //   throw new ErrorHandler(400, 'currency not valid!')
+    // }
     const { GTIN } = req.body
     if (GTIN) {
       if (!regex.isGTIN(GTIN)) {
@@ -148,7 +152,7 @@ const atomUpdateFormValidate = (req, res, next) => {
     }
     const { SKU } = req.body
     if (SKU) {
-      if (!regex.isAlphanumericString(SKU)) {
+      if (!regex.isSKU(SKU)) {
         throw new ErrorHandler(400, 'SKU not valid!')
       }
     }
