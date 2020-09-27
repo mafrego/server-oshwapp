@@ -85,6 +85,20 @@ module.exports = {
         }
     },
 
+    async getAssemblies(req, res) {
+        try {
+            const project = await db.find('Project', req.params.id)
+            const json = await project.toJson()
+            const assemblies = await json.refers_to.map(el => el.node)
+            res.status(200).send(assemblies)
+        } catch (error) {
+            console.log(error);
+            res.status(500).send({
+                error: `An error has occured trying to fetch assemblies of project: ${req.arams.id}`
+            })
+        }
+    },
+
     async createProject(req, res) {
         try {
             // TODO compose imageUrl from user image or other and select a random img

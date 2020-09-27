@@ -21,6 +21,9 @@ module.exports = function(app) {
     app.get('/productsbyproject/:id',
     ProjectsController.getAllProducts)
 
+    app.get('/assembliesbyproject/:id',
+    ProjectsController.getAssemblies)
+
     app.get('/projects/:id', 
     ProjectsController.show)
 
