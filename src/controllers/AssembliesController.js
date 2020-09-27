@@ -63,7 +63,7 @@ module.exports = {
     async assembleCopy(req, res) {
         const projectId = req.params.id
         const name = req.body.name
-        // console.log(req.body.quantities)
+        console.log(req.body)
         // TODO refactor: add imageUrl
         req.body.imageUrl = process.env.AWS_S3_BASE_URL+ projectId +"/images/"+ name +".png"
         
