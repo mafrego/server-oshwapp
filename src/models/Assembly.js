@@ -5,6 +5,7 @@ module.exports = {
         type: 'uuid',
         required: true, 
     },
+    itemNumber: 'int',
     name: 'string',
     description: 'string',
     quantity: 'int',
