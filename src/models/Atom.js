@@ -13,6 +13,7 @@ module.exports = {
     quantity: 'int',
     quantity_to_assemble: 'int',
     unitCost: 'float',
+    pseudoUnitCost: 'float',
     totalCost: 'float',
     currency: 'string',     // ISO 4217
     GTIN:'string',

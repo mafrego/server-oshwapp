@@ -7,10 +7,12 @@ module.exports = {
     },
     itemNumber: 'int',
     name: 'string',
-    description: 'string',
+    description: 'string', 
     quantity: 'int',
     quantity_to_assemble: 'int',
     instruction: 'string',
+    unitCost: 'float',
+    pseudoUnitCost: 'float',
     totalCost: 'float',         //sum of cost of its parts, shippingCosts included
     link: {
         type: "string",
