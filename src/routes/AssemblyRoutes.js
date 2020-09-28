@@ -1,5 +1,6 @@
 const authJwt  = require("../middleware/AuthJWT");
 const AssembliesController = require('../controllers/AssembliesController')
+const validate  = require("../middleware/formValidate");
 
 module.exports = function(app) {
 
@@ -23,6 +24,7 @@ module.exports = function(app) {
     AssembliesController.post)
 
     app.post('/assemblycopy/:id', 
+    validate.assemblyFormValidate,
     authJwt.verifyToken,
     authJwt.isAssemblerOrAdmin,
     AssembliesController.assembleCopy)
