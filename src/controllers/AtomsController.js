@@ -86,16 +86,16 @@ module.exports = {
         }
     },
 
-    // check if after updating pre-existing relationships are kept
+    // neode bug needs to be fixed #141 on gitHub
     async update(req, res) {
         try {
-            console.log('atom: ', req.body)
+            // console.log('atom: ', req.body)
             const atom = await db.model('Atom').find(req.body.uuid)
             const atomUpdated = await atom.update(req.body)
             if (atomUpdated) {
                 const atomBis = await db.model('Atom').find(req.body.uuid)
                 const json = await atomBis.toJson()
-                console.log('atomBis:', json)
+                // console.log('atomBis:', json)
                 // 200 for modified existing resource with PUT
                 res.status(200).send(json)
             }
@@ -106,7 +106,7 @@ module.exports = {
         } catch (error) {
             console.log(error);
             res.status(500).send({
-                error: `An error has occurred trying to update atom with uuid:${req.body.uuid}`
+                error: `An error has occurred trying to update atom: ${req.body.uuid}`
             })
         }
     },
