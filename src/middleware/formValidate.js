@@ -200,9 +200,33 @@ const assemblyFormValidate = (req, res, next) => {
     if (!regex.isPositiveInt(quantity)) {
       throw new ErrorHandler(400, 'quantity not valid!')
     }
-    const { instructions } = req.body
-    if (instructions) {                                            // notes are not required
-      if (!regex.isDescriptionString(instructions)) {
+    const { instruction } = req.body
+    if (instruction) {                                            // notes are not required
+      if (!regex.isDescriptionString(instruction)) {
+        throw new ErrorHandler(400, 'instructions not valid!')
+      }
+    }
+    const { link } = req.body
+    if (link) {                                            // link is not required
+      if (!regex.isHTTP(link)) {
+        throw new ErrorHandler(400, 'link not valid!')
+      }
+    }
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+
+const assemblyUpdateFormValidate = (req, res, next) => {
+  try {
+    const { description } = req.body
+    if (!regex.isDescriptionString(description)) {
+      throw new ErrorHandler(400, 'description not valid')
+    }
+    const { instruction } = req.body
+    if (instruction) {                                            // notes are not required
+      if (!regex.isDescriptionString(instruction)) {
         throw new ErrorHandler(400, 'instructions not valid!')
       }
     }
@@ -222,5 +246,6 @@ module.exports = {
   projectFormValidate: projectFormValidate,
   atomFormValidate: atomFormValidate,
   atomUpdateFormValidate: atomUpdateFormValidate,
-  assemblyFormValidate: assemblyFormValidate
+  assemblyFormValidate: assemblyFormValidate,
+  assemblyUpdateFormValidate: assemblyUpdateFormValidate
 }

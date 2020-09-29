@@ -23,6 +23,12 @@ module.exports = function(app) {
     authJwt.isAssemblerOrAdmin,
     AssembliesController.post)
 
+    app.put('/assembly', 
+    validate.assemblyUpdateFormValidate,
+    authJwt.verifyToken,
+    authJwt.isAssemblerOrAdmin,
+    AssembliesController.updateAssemby)
+
     app.post('/assemblycopy/:id', 
     validate.assemblyFormValidate,
     authJwt.verifyToken,
