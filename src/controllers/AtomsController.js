@@ -86,23 +86,15 @@ module.exports = {
         }
     },
 
-    // neode bug needs to be fixed #141 on gitHub
     async update(req, res) {
         try {
             // console.log('atom: ', req.body)
             const atom = await db.model('Atom').find(req.body.uuid)
             const atomUpdated = await atom.update(req.body)
-            if (atomUpdated) {
-                const atomBis = await db.model('Atom').find(req.body.uuid)
-                const json = await atomBis.toJson()
-                // console.log('atomBis:', json)
-                // 200 for modified existing resource with PUT
-                res.status(200).send(json)
-            }
-            // const json = await atomUpdated.toJson()
+            const json = await atomUpdated.toJson()
             // console.log('atom updated:', json)
             // 200 for modified existing resource with PUT
-            // res.status(200).send(json)
+            res.status(200).send(json)
         } catch (error) {
             console.log(error);
             res.status(500).send({

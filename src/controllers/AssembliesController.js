@@ -177,20 +177,13 @@ module.exports = {
     // neode bug needs to be fixed #141 on gitHub
     async updateAssemby(req, res){
         try {
-            console.log('assembly: ', req.body)
+            // console.log('assembly: ', req.body)
             const assembly = await db.model('Assembly').find(req.body.uuid)
             const assemblyUpdated = await assembly.update(req.body)
-            if (assemblyUpdated) {
-                const assemblyBis = await db.model('Assembly').find(req.body.uuid)
-                const json = await assemblyBis.toJson()
-                console.log('assemblyBis:', json)
-                // 200 for modified existing resource with PUT
-                res.status(200).send(json)
-            }
-            // const json = await atomUpdated.toJson()
+            const json = await assemblyUpdated.toJson()
             // console.log('atom updated:', json)
             // 200 for modified existing resource with PUT
-            // res.status(200).send(json)
+            res.status(200).send(json)
         } catch (error) {
             console.log(error);
             res.status(500).send({
